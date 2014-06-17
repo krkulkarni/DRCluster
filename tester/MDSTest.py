@@ -2,6 +2,7 @@ from Bio.Blast.Applications import NcbiblastpCommandline
 from Bio.Blast import NCBIXML
 import math
 import numpy
+import string
 import re
 import rpy2.robjects as robj
 
@@ -10,8 +11,8 @@ import rpy2.robjects as robj
 ##
 ##Results will be stored in an XML file in the current working directory
 ##Constant size of database defined as 1,000,000 (TBD)
-blastp = NcbiblastpCommandline(query="~/BLAST+/families/superfamilies.fas",
-                               db="~/BLAST+/families/superfamilies",
+blastp = NcbiblastpCommandline(query="~/BLAST+/tester/oneprot.fas",
+                               db="~/BLAST+/tester/oneprot",
                                out="results.xml",
                                outfmt=5,
                                dbsize=1000000
@@ -23,9 +24,10 @@ stdout, stderr = blastp()
 
 ##Read FASTA file names and make a list
 names = []
-with open("families/names_superfamilies") as f:
+with open("name_oneprot") as f:
     for line in f:
-        names.append(line.strip())
+        names.append(line.strip().strip('.'))
+
 
 ##Create the distance matrix
 ##Initialize with 1 (the farthest possible value)
@@ -73,13 +75,15 @@ def nextRecord():
 def addToMatrix(record):
 
     ##store index of query
-    queryindex = names.index(record.query)
+    query = record.query.encode("utf-8")
+    queryindex = names.index(query)
 
     ##for each alignment in the record,
     ##remove BLAST tag and store e-value in matrix
     for alignment in record.alignments:
         for hsp in alignment.hsps:
-            match = re.sub(r'gnl\|BL_ORD_ID\|\d* ',r'',alignment.title)
+            match = re.sub(r'gnl\|BL_ORD_ID\|\d* ',r'',alignment.title).encode("utf-8")
+            match = match.strip().strip(".")
             matchindex = names.index(match)
             matrix[queryindex][matchindex] = hsp.expect
             #print queryindex, ":::", matchindex, ":::", hsp.expect

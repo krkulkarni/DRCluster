@@ -2,5 +2,7 @@ grep "^>" ~/BLAST+/families/superfamilies.fas | sed 's/^>//' > ~/BLAST+/families
 
 python ~/BLAST+/MDSCluster.py
 
-rm ~/BLAST+/families/names_superfamilies
-rm results.xml
+#rm ~/BLAST+/families/names_superfamilies
+#rm results.xml
+
+# updated june 17, 2014 
