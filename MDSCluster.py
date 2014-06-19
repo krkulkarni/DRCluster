@@ -4,13 +4,27 @@ import math
 import csv
 import numpy
 import re
-import sys,getopt
+import sys, argparse
 import rpy2.robjects as robj
 
 ##
 ##GLOBAL VARIABLES
 ##
 
+__author__ = "kulkarnik"
+paraParser = argparse.ArgumentParser(description='This is the argument parser.')
+group = paraParser.add_mutually_exclusive_group()
+group.add_argument('-b','--bitscore',help='Chooses the bitscore option', action="store_true", required = False)
+group.add_argument('-e','--evalue',help="Chooses the e-value option", action="store_true", required = False)
+args = paraParser.parse_args()
+
+if (args.bitscore == True):
+    flag = 'b'
+elif (args.evalue == True):
+    flag = 'e'
+else:
+    print "Error, must pick -b or -e flag"
+    sys.exit(2)
 
 ##Set up the command for protein blast.
 ##Format 'blastp -query inputfile -db database -out XMLfile -outfmt 5'
@@ -79,33 +93,76 @@ def createMatrix():
 tabhandle = open("families/results.out")
 tabparser = csv.reader(tabhandle, delimiter='\t')
 
-def nextLine():
-    try:
-        while (True):
-            line = next(tabparser)
-            qseqid = line[0]
-            qlen = int(line[1].strip())
-            sseqid = line[2]
-            slen = int(line[3].strip())
-            evalue = float(line[4].strip())
-            bitscore = float(line[5].strip())
 
-            addtoMatrix(qseqid,qlen,sseqid,slen,evalue,bitscore)
+##Read each line in tab-delimited file and store important variables
+def nextLine(flag):
+    ##if the bit flag is on, run addtoBitMatrix
+    if (flag == 'b'):
+        try:
+            while (True):
+                line = next(tabparser)
+                qseqid = line[0]
+                qlen = int(line[1].strip())
+                sseqid = line[2]
+                slen = int(line[3].strip())
+                evalue = float(line[4].strip())
+                bitscore = float(line[5].strip())
 
-    except StopIteration:
-        tabhandle.close()
+                addtoBitMatrix(qseqid,qlen,sseqid,bitscore)
+
+        except StopIteration:
+            tabhandle.close()
+
+    ##otherwise run add to Ematrix
+    else:
+        print "still working on e matrix"
+        sys.exit(2)
+        # try:
+        #     while (True):
+        #         line = next(tabparser)
+        #         qseqid = line[0]
+        #         qlen = int(line[1].strip())
+        #         sseqid = line[2]
+        #         slen = int(line[3].strip())
+        #         evalue = float(line[4].strip())
+        #         bitscore = float(line[5].strip())
+        #
+        #         ##REMEMBER TO ADD FLAG OPTION FOR EITHER EVALUE OR BITSCORE MATRIX
+        #         addtoEMatrix(qseqid,qlen,sseqid,evalue)
+        #
+        # except StopIteration:
+        #     tabhandle.close()
+
+
 
 ##add scaled score to distance matrix
-def addtoMatrix(query,qlen,match,mlen,e,bits):
+def addtoBitMatrix(query,qlen,match,bits):
     ##look up query index and match index
     queryindex = names.index(query)
     matchindex = names.index(match)
 
     ##convert bit score into a scaled score
-    scaledscore = (math.log(.25/(bits/qlen))+2)
-    print query ,match, scaledscore, queryindex, matchindex
-    if (scaledscore < matrix[queryindex][matchindex] and scaledscore < 4):
-        matrix[queryindex][matchindex] = scaledscore
+    bitscaledscore = (math.log(.25/(bits/qlen))+2)
+    #print query ,match, bitscaledscore
+
+    ##Only add scaled score to matrix if it is less than default and any other comparison
+    if (bitscaledscore < matrix[queryindex][matchindex] and bitscaledscore < 4):
+        matrix[queryindex][matchindex] = bitscaledscore
+
+
+
+def addtoEMatrix(query,qlen,match,e):
+    ##look up query index and match index
+    queryindex = names.index(query)
+    matchindex = names.index(match)
+
+    ##convert bit score into a scaled score
+    escaledscore = (math.log(.25/(e/qlen))+2)
+    #print query ,match, escaledscore
+
+    ##Only add scaled score to matrix if it is less than default and any other comparison
+    if (escaledscore < matrix[queryindex][matchindex] and escaledscore < 4):
+        matrix[queryindex][matchindex] = escaledscore
 
 
 ##convert numpy matrix to R matrix
@@ -115,28 +172,42 @@ def convertToR(mat):
     rmat = robj.r.matrix(matvec, nrow=nr, ncol=nc)
     return rmat
 
+
 ##perform the MDS on R matrix
 def mds(rmatrix):
+    ##Define the R functions
     cmdscale = robj.r.cmdscale
+
+
+    points = cmdscale(rmatrix)
+    identify = robj.r.identify
+
+    ##Obtain x-, y-coordinates from MDS
+    x = points.rx(True,1)
+    y = points.rx(True,2)
+
+    return x,y
+
+def pointPlotter(x,y):
+    ##Define the R functions
     plot = robj.r.plot
     text = robj.r.text
-    loc = cmdscale(rmatrix)
-    identify = robj.r.identify
-    x = loc.rx(True,1)
-    y = loc.rx(True,2)
+    ##Plot and label points
     plot(x,y, xlab='', ylab='')
     #identify(x,y,labels=names,cex=0.6,pos=4)
     text(x, y, labels=names, cex=0.4, pos=4, col="black")
+
+    ##Wait for user input to end
     raw_input()
 
-#nextRecord()
+##RUN THE CODE
 runblasttab()
 names = readfasta()
 matrix = createMatrix()
-nextLine()
+nextLine(flag)
 rmat = convertToR(matrix)
-mds(rmat)
-
+x,y = mds(rmat)
+pointPlotter(x,y)
 
 
 ##
