@@ -4,7 +4,13 @@ import math
 import csv
 import numpy
 import re
+import sys,getopt
 import rpy2.robjects as robj
+
+##
+##GLOBAL VARIABLES
+##
+
 
 ##Set up the command for protein blast.
 ##Format 'blastp -query inputfile -db database -out XMLfile -outfmt 5'
@@ -15,46 +21,53 @@ import rpy2.robjects as robj
 ##
 ## REACTIVATE THESE LINES IF RESULTS.XML IS REMOVED
 ##
-"""
-blastp = NcbiblastpCommandline(query="~/BLAST+/families/superfamilies.fas",
-                               db="~/BLAST+/families/superfamilies",
-                               out="results.xml",
-                               outfmt=5,
-                               dbsize=1000000
-                               )
+def runblastxml():
+    blastxml = NcbiblastpCommandline(query="~/BLAST+/families/superfamilies.fas",
+                                   db="~/BLAST+/families/superfamilies",
+                                   out="results.xml",
+                                   outfmt=5,
+                                   dbsize=1000000
+                                   )
 
 
-##Run blastp locally and store results in results.xml
-stdout, stderr = blastp()
-"""
+    ##Run blastp locally and store results in results.xml
+    stdout, stderr = blastp()
+
 
 ##Same command as above, stored in tab delimited file
 ##
 ## REACTIVATE THESE LINES IF RESULTS.OUT IS REMOVED
 ##
-"""
-blastp = NcbiblastpCommandline(query="~/BLAST+/families/superfamilies.fas",
-                               db="~/BLAST+/families/superfamilies",
-                               out="results.out",
-                               outfmt='"6 qseqid qlen sseqid slen evalue bitscore"',
-                               dbsize=1000000
-                               )
+
+def runblasttab():
+    blastp = NcbiblastpCommandline(query="~/BLAST+/families/superfamilies.fas",
+                                   db="~/BLAST+/families/superfamilies",
+                                   out="~/BLAST+/families/results.out",
+                                   outfmt='"6 qseqid qlen sseqid slen evalue bitscore"',
+                                   evalue = 1000000000,
+                                   dbsize=1000000
+                                   )
 
 
-##Run blastp locally and store results in results.xml
-stdout, stderr = blastp()
-"""
+    ##Run blastp locally and store results in results.xml
+    stdout, stderr = blastp()
+
 
 ##Read FASTA file names and make a list
-names = []
-with open("families/names_superfamilies") as f:
-    for line in f:
-        names.append(line.strip())
+def readfasta():
+    names = []
+    with open("families/names_superfamilies") as f:
+        for line in f:
+            names.append(line.strip())
+    return names
 
 ##Create the distance matrix
 ##Initialize with 1 (the farthest possible value)
 
-matrix = numpy.ones(shape=(len(names),len(names)))
+def createMatrix():
+    matrix = numpy.empty(shape=(len(names),len(names)))
+    matrix.fill(4)
+    return matrix
 
 
 ##
@@ -63,7 +76,7 @@ matrix = numpy.ones(shape=(len(names),len(names)))
 
 ##Creates handle for results.out file
 ##Parse tab delimited file to generate iterator
-tabhandle = open("results.out")
+tabhandle = open("families/results.out")
 tabparser = csv.reader(tabhandle, delimiter='\t')
 
 def nextLine():
@@ -73,13 +86,57 @@ def nextLine():
             qseqid = line[0]
             qlen = int(line[1].strip())
             sseqid = line[2]
-            slen = line[3]
-            evalue = line[4]
+            slen = int(line[3].strip())
+            evalue = float(line[4].strip())
             bitscore = float(line[5].strip())
-            print sseqid, '\t', '\t', 1/(bitscore/qlen)
+
+            addtoMatrix(qseqid,qlen,sseqid,slen,evalue,bitscore)
 
     except StopIteration:
         tabhandle.close()
+
+##add scaled score to distance matrix
+def addtoMatrix(query,qlen,match,mlen,e,bits):
+    ##look up query index and match index
+    queryindex = names.index(query)
+    matchindex = names.index(match)
+
+    ##convert bit score into a scaled score
+    scaledscore = (math.log(.25/(bits/qlen))+2)
+    print query ,match, scaledscore, queryindex, matchindex
+    if (scaledscore < matrix[queryindex][matchindex] and scaledscore < 4):
+        matrix[queryindex][matchindex] = scaledscore
+
+
+##convert numpy matrix to R matrix
+def convertToR(mat):
+    nr, nc = mat.shape
+    matvec = robj.FloatVector(mat.transpose().reshape((mat.size)))
+    rmat = robj.r.matrix(matvec, nrow=nr, ncol=nc)
+    return rmat
+
+##perform the MDS on R matrix
+def mds(rmatrix):
+    cmdscale = robj.r.cmdscale
+    plot = robj.r.plot
+    text = robj.r.text
+    loc = cmdscale(rmatrix)
+    identify = robj.r.identify
+    x = loc.rx(True,1)
+    y = loc.rx(True,2)
+    plot(x,y, xlab='', ylab='')
+    #identify(x,y,labels=names,cex=0.6,pos=4)
+    text(x, y, labels=names, cex=0.4, pos=4, col="black")
+    raw_input()
+
+#nextRecord()
+runblasttab()
+names = readfasta()
+matrix = createMatrix()
+nextLine()
+rmat = convertToR(matrix)
+mds(rmat)
+
 
 
 ##
@@ -138,29 +195,6 @@ def nextLine():
 #             matrix[queryIndex][matchindex] = hsp.expect
 #             #print queryindex, ":::", matchindex, ":::", hsp.expect
 #
-
-
-##convert numpy matrix to R matrix
-def convertToR(mat):
-    nr, nc = mat.shape
-    matvec = robj.FloatVector(mat.transpose().reshape((mat.size)))
-    rmat = robj.r.matrix(matvec, nrow=nr, ncol=nc)
-
-    return rmat
-
-##perform the MDS on R matrix
-def mds(rmatrix):
-    cmdscale = robj.r.cmdscale
-    plot = robj.r.plot
-    loc = cmdscale(rmatrix)
-    x = loc.rx(True,1)
-    y = loc.rx(True,2)
-
-
-#nextRecord()
-nextLine()
-rmat = convertToR(matrix)
-##mds(rmat)
 
 
 
