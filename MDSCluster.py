@@ -54,11 +54,10 @@ def runblastxml():
 ##
 
 def runblasttab():
-    blastp = NcbiblastpCommandline(query="~/BLAST+/families/superfamilies.fas",
-                                   db="~/BLAST+/families/superfamilies",
-                                   out="~/BLAST+/families/results.out",
+    blastp = NcbiblastpCommandline(query="~/BLAST+/uniprot/uniprot.fas",
+                                   db="~/BLAST+/uniprot/uniprot",
+                                   out="~/BLAST+/uniprot/results.out",
                                    outfmt='"6 qseqid qlen sseqid slen evalue bitscore"',
-                                   evalue = 1000000000,
                                    dbsize=1000000
                                    )
 
@@ -70,10 +69,11 @@ def runblasttab():
 ##Read FASTA file names and make a list
 def readfasta():
     names = []
-    with open("families/names_superfamilies") as f:
+    with open("uniprot/names_uniprot") as f:
         for line in f:
-            names.append(line.strip())
+            names.append(line.strip().split()[0])
     return names
+
 
 ##Create the distance matrix
 ##Initialize with 1 (the farthest possible value)
@@ -90,7 +90,7 @@ def createMatrix():
 
 ##Creates handle for results.out file
 ##Parse tab delimited file to generate iterator
-tabhandle = open("families/results.out")
+tabhandle = open("uniprot/results.out","rb")
 tabparser = csv.reader(tabhandle, delimiter='\t')
 
 
@@ -107,7 +107,6 @@ def nextLine(flag):
                 slen = int(line[3].strip())
                 evalue = float(line[4].strip())
                 bitscore = float(line[5].strip())
-
                 addtoBitMatrix(qseqid,qlen,sseqid,bitscore)
 
         except StopIteration:
@@ -115,23 +114,23 @@ def nextLine(flag):
 
     ##otherwise run add to Ematrix
     else:
-        print "still working on e matrix"
-        sys.exit(2)
-        # try:
-        #     while (True):
-        #         line = next(tabparser)
-        #         qseqid = line[0]
-        #         qlen = int(line[1].strip())
-        #         sseqid = line[2]
-        #         slen = int(line[3].strip())
-        #         evalue = float(line[4].strip())
-        #         bitscore = float(line[5].strip())
-        #
-        #         ##REMEMBER TO ADD FLAG OPTION FOR EITHER EVALUE OR BITSCORE MATRIX
-        #         addtoEMatrix(qseqid,qlen,sseqid,evalue)
-        #
-        # except StopIteration:
-        #     tabhandle.close()
+        try:
+            while (True):
+                line = next(tabparser)
+                qseqid = line[0]
+                qlen = int(line[1].strip())
+                sseqid = line[2]
+                slen = int(line[3].strip())
+                evalue = float(line[4].strip())
+                bitscore = float(line[5].strip())
+
+                ##REMEMBER TO ADD FLAG OPTION FOR EITHER EVALUE OR BITSCORE MATRIX
+                #addtoEMatrix(qseqid,qlen,sseqid,evalue)
+
+        except StopIteration:
+            tabhandle.close()
+            print "still working on e matrix"
+            sys.exit(2)
 
 
 
@@ -150,7 +149,7 @@ def addtoBitMatrix(query,qlen,match,bits):
         matrix[queryindex][matchindex] = bitscaledscore
 
 
-
+##WORK ON THE SCALED SCORE FOR E VALUES
 def addtoEMatrix(query,qlen,match,e):
     ##look up query index and match index
     queryindex = names.index(query)
@@ -195,7 +194,7 @@ def pointPlotter(x,y):
     ##Plot and label points
     plot(x,y, xlab='', ylab='')
     #identify(x,y,labels=names,cex=0.6,pos=4)
-    text(x, y, labels=names, cex=0.4, pos=4, col="black")
+    #text(x, y, labels=names, cex=0.4, pos=4, col="black")
 
     ##Wait for user input to end
     raw_input()
