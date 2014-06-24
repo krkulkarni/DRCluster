@@ -6,81 +6,106 @@ import numpy
 import re
 import sys, argparse
 import rpy2.robjects as robj
+from rpy2.robjects.packages import importr
+plot3d = importr("scatterplot3d")
 
 ##
 ##GLOBAL VARIABLES
 ##
 
-__author__ = "kulkarnik"
-paraParser = argparse.ArgumentParser(description='This is the argument parser.')
-group = paraParser.add_mutually_exclusive_group()
-group.add_argument('-b','--bitscore',help='Chooses the bitscore option', action="store_true", required = False)
-group.add_argument('-e','--evalue',help="Chooses the e-value option", action="store_true", required = False)
-args = paraParser.parse_args()
+resultsfile = "uniprot/results.out"
+fastafile = "uniprot/names_uniprot"
 
-if (args.bitscore == True):
-    flag = 'b'
-elif (args.evalue == True):
-    flag = 'e'
-else:
-    print "Error, must pick -b or -e flag"
-    sys.exit(2)
+queryname = "~/BLAST+/uniprot/uniprot.fas"
+dbname = "~/BLAST+/uniprot/uniprot"
+outfile = "~/BLAST+/uniprot/results.out"
+fmt = '"6 qseqid qlen sseqid slen evalue bitscore"'
+dbsize = 1000000
+ecutoff = 1000000
+
+__author__ = "kulkarnik"
+
+##
+## Set up the argument parser using the argparse module
+##
+
+def arg_parser():
+    paraParser = argparse.ArgumentParser(description='Clustering analysis of BLAST output using MDS algorithm')
+
+    ## This mutually exclusive group chooses between the bit score and e-value
+    ## as the value to generate the distance matrix
+    valueToUse = paraParser.add_mutually_exclusive_group()
+    valueToUse.add_argument('-b','--bitscore',help='Chooses the bitscore option', action="store_true", required = False)
+    valueToUse.add_argument('-e','--evalue',help="Chooses the e-value option", action="store_true", required = False)
+
+    ## This mutually exclusive group chooses between the 2D and 3D options to
+    ## graph the protein clusters
+    dimension = paraParser.add_mutually_exclusive_group()
+    dimension.add_argument('-2d','--twod',help="Chooses the 2D plot function", action="store_true", required = False)
+    dimension.add_argument('-3d','--threed', help="Chooses the 3D plot function", action="store_true", required = False)
+
+    args = paraParser.parse_args()
+
+    ## These statements force user to choose one of either the -b or -e options,
+    ## and one of either the -2d or -3d options
+    if (args.bitscore == True):
+        bitOrE = 'b'
+    elif (args.evalue == True):
+        bitOrE = 'e'
+    else:
+        print "Error, must pick -b or -e flag"
+        sys.exit(2)
+
+    if (args.twod== True):
+        dim = 2
+    elif (args.threed == True):
+        dim = 3
+    else:
+        print "Error, must pick -2d or -3d flag"
+        sys.exit(3)
+
+    ## return arguments for later use
+    return bitOrE, dim
 
 ##Set up the command for protein blast.
-##Format 'blastp -query inputfile -db database -out XMLfile -outfmt 5'
+##Format 'blastp -query inputfile -db database -out tabfile -outfmt "6 qseqid qlen sseqid slen evalue bitscore" -dbsize 1000000'
 ##
-##Results will be stored in an XML file in the current working directory
-##Constant size of database defined as 1,000,000 (TBD)
+##Results will be stored in an tab-delimited file in the chosen path
+##Constant size of searchspace defined as 1,000,000 (TBD)
+##
+## CALL THIS FUNCTION IF RESULTS.OUT IS REMOVED
+##
 
-##
-## REACTIVATE THESE LINES IF RESULTS.XML IS REMOVED
-##
-def runblastxml():
-    blastxml = NcbiblastpCommandline(query="~/BLAST+/families/superfamilies.fas",
-                                   db="~/BLAST+/families/superfamilies",
-                                   out="results.xml",
-                                   outfmt=5,
-                                   dbsize=1000000
+def run_blast_tab(queryname,dbname,outfile,fmt,dbsize,ecutoff):
+    blastP = NcbiblastpCommandline(query=queryname,
+                                   db=dbname,
+                                   out=outfile,
+                                   outfmt=fmt,
+                                   #dbsize=dbsize,
+                                   #searchsp=10000
                                    )
 
-
-    ##Run blastp locally and store results in results.xml
-    stdout, stderr = blastp()
-
-
-##Same command as above, stored in tab delimited file
-##
-## REACTIVATE THESE LINES IF RESULTS.OUT IS REMOVED
-##
-
-def runblasttab():
-    blastp = NcbiblastpCommandline(query="~/BLAST+/uniprot/uniprot.fas",
-                                   db="~/BLAST+/uniprot/uniprot",
-                                   out="~/BLAST+/uniprot/results.out",
-                                   outfmt='"6 qseqid qlen sseqid slen evalue bitscore"',
-                                   dbsize=1000000
-                                   )
-
-
-    ##Run blastp locally and store results in results.xml
-    stdout, stderr = blastp()
+    ##Run blastp locally and store results in results.out
+    blastP()
 
 
 ##Read FASTA file names and make a list
-def readfasta():
+def read_fasta(fastafile):
     names = []
-    with open("uniprot/names_uniprot") as f:
+    with open(fastafile) as f:
         for line in f:
             names.append(line.strip().split()[0])
     return names
 
 
 ##Create the distance matrix
-##Initialize with 1 (the farthest possible value)
-
-def createMatrix():
+##Initialize with 4 (the farthest possible value)
+def create_matrix(flag):
     matrix = numpy.empty(shape=(len(names),len(names)))
-    matrix.fill(4)
+    if (flag == 'b'):
+        matrix.fill(5.2)
+    else:
+        matrix.fill(4)
     return matrix
 
 
@@ -90,128 +115,199 @@ def createMatrix():
 
 ##Creates handle for results.out file
 ##Parse tab delimited file to generate iterator
-tabhandle = open("uniprot/results.out","rb")
-tabparser = csv.reader(tabhandle, delimiter='\t')
+def open_file(filename):
+    tabHandle = open(filename,"rb")
+    tabParser = csv.reader(tabHandle, delimiter='\t')
 
+    return tabParser, tabHandle
 
 ##Read each line in tab-delimited file and store important variables
-def nextLine(flag):
+
+##
+## qSeqId   --> name of query
+## qLen     --> length of query
+## sSeqId   --> name of match
+## sLen     --> length of match
+## eValue   --> e-value of match
+## bitScore --> bit score of match
+##
+
+def next_line(flag, parser, handle):
     ##if the bit flag is on, run addtoBitMatrix
     if (flag == 'b'):
         try:
             while (True):
-                line = next(tabparser)
-                qseqid = line[0]
-                qlen = int(line[1].strip())
-                sseqid = line[2]
-                slen = int(line[3].strip())
-                evalue = float(line[4].strip())
-                bitscore = float(line[5].strip())
-                addtoBitMatrix(qseqid,qlen,sseqid,bitscore)
+                line = next(parser)
+                qSeqId = line[0]
+                qLen = int(line[1].strip())
+                sSeqId = line[2]
+                bitScore = float(line[5].strip())
+                add_to_bit_matrix(qSeqId,qLen,sSeqId,bitScore)
 
         except StopIteration:
-            tabhandle.close()
+            handle.close()
 
     ##otherwise run add to Ematrix
     else:
         try:
             while (True):
-                line = next(tabparser)
-                qseqid = line[0]
-                qlen = int(line[1].strip())
-                sseqid = line[2]
-                slen = int(line[3].strip())
-                evalue = float(line[4].strip())
-                bitscore = float(line[5].strip())
+                line = next(parser)
+                qSeqId = line[0]
+                qLen = int(line[1].strip())
+                sSeqId = line[2]
+                eValue = float(line[4].strip())
 
                 ##REMEMBER TO ADD FLAG OPTION FOR EITHER EVALUE OR BITSCORE MATRIX
-                #addtoEMatrix(qseqid,qlen,sseqid,evalue)
+                add_to_e_matrix(qSeqId,qLen,sSeqId,eValue)
 
         except StopIteration:
-            tabhandle.close()
-            print "still working on e matrix"
-            sys.exit(2)
+            handle.close()
 
 
 
 ##add scaled score to distance matrix
-def addtoBitMatrix(query,qlen,match,bits):
+def add_to_bit_matrix(query,qLen,match,bits):
+
     ##look up query index and match index
-    queryindex = names.index(query)
-    matchindex = names.index(match)
+    query_index = names.index(query)
+    match_index = names.index(match)
 
     ##convert bit score into a scaled score
-    bitscaledscore = (math.log(.25/(bits/qlen))+2)
-    #print query ,match, bitscaledscore
+    bit_scaled_score = convert_bit_score(bits,qLen)
+
+    print query ,match, bit_scaled_score
 
     ##Only add scaled score to matrix if it is less than default and any other comparison
-    if (bitscaledscore < matrix[queryindex][matchindex] and bitscaledscore < 4):
-        matrix[queryindex][matchindex] = bitscaledscore
+    if (bit_scaled_score < matrix[query_index][match_index] and bit_scaled_score < 5.2):
+        matrix[query_index][match_index] = bit_scaled_score
 
+
+def convert_bit_score(bitscore,querylength):
+    value = (math.log(.25/(bitscore/querylength))+2)
+    return value
 
 ##WORK ON THE SCALED SCORE FOR E VALUES
-def addtoEMatrix(query,qlen,match,e):
+def add_to_e_matrix(query,qLen,match,e):
     ##look up query index and match index
-    queryindex = names.index(query)
-    matchindex = names.index(match)
+    query_index = names.index(query)
+    match_index = names.index(match)
 
     ##convert bit score into a scaled score
-    escaledscore = (math.log(.25/(e/qlen))+2)
-    #print query ,match, escaledscore
+    e_scaled_score = convert_e_score(e,qLen)
+
+    print query ,match, e_scaled_score
 
     ##Only add scaled score to matrix if it is less than default and any other comparison
-    if (escaledscore < matrix[queryindex][matchindex] and escaledscore < 4):
-        matrix[queryindex][matchindex] = escaledscore
+    if (e_scaled_score < matrix[query_index][match_index] and e_scaled_score < 4):
+        matrix[query_index][match_index] = e_scaled_score
 
+def convert_e_score(evalue,querylength):
+    if (evalue!=0.0):
+        value = math.log(evalue,2)
+    else:
+        value = -593.0
+
+    value = ((value+593.0)/300)**2
+    return value
 
 ##convert numpy matrix to R matrix
-def convertToR(mat):
+def convert_to_r(mat):
     nr, nc = mat.shape
-    matvec = robj.FloatVector(mat.transpose().reshape((mat.size)))
-    rmat = robj.r.matrix(matvec, nrow=nr, ncol=nc)
-    return rmat
+    mat_vec = robj.FloatVector(mat.transpose().reshape((mat.size)))
+    r_mat = robj.r.matrix(mat_vec, nrow=nr, ncol=nc)
+    return r_mat
 
 
 ##perform the MDS on R matrix
-def mds(rmatrix):
+def mds(r_matrix,dim):
     ##Define the R functions
-    cmdscale = robj.r.cmdscale
+    cmd_scale = robj.r.cmdscale
+
+    if (dim==2):
+        ## MDS with 2 dimensions (default)
+        points = cmd_scale(r_matrix)
+        x = points.rx(True,1)
+        y = points.rx(True,2)
+
+        ## call plotter with a 2D graph
+        point_plotter_2d(x,y)
+
+    elif (dim==3):
+        ## MDS with 3 dimensions
+        points = cmd_scale(r_matrix,k=3)
+        x = points.rx(True,1)
+        y = points.rx(True,2)
+        z = points.rx(True,3)
+
+        ## call plotter with 3D graph
+        point_plotter_3d(x,y,z)
 
 
-    points = cmdscale(rmatrix)
-    identify = robj.r.identify
-
-    ##Obtain x-, y-coordinates from MDS
-    x = points.rx(True,1)
-    y = points.rx(True,2)
-
-    return x,y
-
-def pointPlotter(x,y):
+def point_plotter_2d(x,y):
     ##Define the R functions
     plot = robj.r.plot
     text = robj.r.text
+    identify = robj.r.identify
+
     ##Plot and label points
-    plot(x,y, xlab='', ylab='')
+    plot(x,y, xlab='', ylab='',pch=16)
     #identify(x,y,labels=names,cex=0.6,pos=4)
-    #text(x, y, labels=names, cex=0.4, pos=4, col="black")
+    text(x, y, labels=names, cex=0.4, pos=4, col="black")
+
+    ##Wait for user input to end
+    raw_input()
+
+def point_plotter_3d(x,y,z):
+    ##Define the R functions
+    plot = robj.r.scatterplot3d
+    colors = robj.r.rainbow(201)
+    col2rgb = robj.r.col2rgb
+    t = robj.r.t
+    text = robj.r.text
+    identify = robj.r.identify
+
+
+    ##Plot and label points
+    plot(x,y,z, xlab='', ylab='',zlab='',pch=16, highlight_3d=True)
+    #identify(x,y,labels=names,cex=0.6,pos=4)
+    #text(x, y, z, labels=names, cex=0.4, pos=4, col="black")
 
     ##Wait for user input to end
     raw_input()
 
 ##RUN THE CODE
-runblasttab()
-names = readfasta()
-matrix = createMatrix()
-nextLine(flag)
-rmat = convertToR(matrix)
-x,y = mds(rmat)
-pointPlotter(x,y)
+print "Running script..."
+bitOrE, dim = arg_parser()
+#run_blast_tab(queryname,dbname,outfile,fmt,dbsize,ecutoff)
+names = read_fasta(fastafile)
+matrix = create_matrix(bitOrE)
+tabParser, tabHandle = open_file(resultsfile)
+next_line(bitOrE,tabParser,tabHandle)
+r_mat = convert_to_r(matrix)
+mds(r_mat,dim)
+
 
 
 ##
 """XML OPTION"""
 ##
+
+##
+## REACTIVATE THESE LINES IF RESULTS.XML IS REMOVED
+##
+# def run_blast_xml():
+#     blastXml = NcbiblastpCommandline(query="~/BLAST+/families/superfamilies.fas",
+#                                    db="~/BLAST+/families/superfamilies",
+#                                    out="results.xml",
+#                                    outfmt=5,
+#                                    dbsize=1000000
+#                                    )
+#
+#
+#     ##Run blastp locally and store results in results.xml
+#     stdout, stderr = blastXml()
+#
+
 #
 # ##Creates handle for results.xml file
 # ##REMEMBER TO CLOSE HANDLE
