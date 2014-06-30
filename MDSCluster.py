@@ -9,12 +9,15 @@ import rpy2.robjects as robj
 from rpy2.robjects.packages import importr
 plot3d = importr("scatterplot3d")
 
+
 ##
 ##GLOBAL VARIABLES
 ##
 
-resultsfile = "uniprot/results.out"
-fastafile = "uniprot/names_uniprot"
+__author__ = "kulkarnik"
+
+resultsfile = "newfas/results.out"
+fastafile = "newfas/names_mainfam"
 
 queryname = "~/BLAST+/uniprot/uniprot.fas"
 dbname = "~/BLAST+/uniprot/uniprot"
@@ -23,7 +26,7 @@ fmt = '"6 qseqid qlen sseqid slen evalue bitscore"'
 dbsize = 1000000
 ecutoff = 1000000
 
-__author__ = "kulkarnik"
+
 
 ##
 ## Set up the argument parser using the argparse module
@@ -92,10 +95,13 @@ def run_blast_tab(queryname,dbname,outfile,fmt,dbsize,ecutoff):
 ##Read FASTA file names and make a list
 def read_fasta(fastafile):
     names = []
+    colors = []
     with open(fastafile) as f:
         for line in f:
-            names.append(line.strip().split()[0])
-    return names
+            parts = line.split(";")
+            names.append(parts[0].strip().split()[0])
+            colors.append(int(parts[1]))
+    return names,colors
 
 
 ##Create the distance matrix
@@ -103,9 +109,9 @@ def read_fasta(fastafile):
 def create_matrix(flag):
     matrix = numpy.empty(shape=(len(names),len(names)))
     if (flag == 'b'):
-        matrix.fill(5.2)
+        matrix.fill(500)
     else:
-        matrix.fill(4)
+        matrix.fill(500)
     return matrix
 
 
@@ -138,11 +144,12 @@ def next_line(flag, parser, handle):
         try:
             while (True):
                 line = next(parser)
-                qSeqId = line[0]
+                qSeqId = line[0].split(";")[0]
                 qLen = int(line[1].strip())
-                sSeqId = line[2]
+                sSeqId = line[2].split(";")[0]
+                sLen = int(line[3].strip())
                 bitScore = float(line[5].strip())
-                add_to_bit_matrix(qSeqId,qLen,sSeqId,bitScore)
+                add_to_bit_matrix(qSeqId,qLen,sSeqId,bitScore,sLen)
 
         except StopIteration:
             handle.close()
@@ -152,9 +159,9 @@ def next_line(flag, parser, handle):
         try:
             while (True):
                 line = next(parser)
-                qSeqId = line[0]
+                qSeqId = line[0].split(";")[0]
                 qLen = int(line[1].strip())
-                sSeqId = line[2]
+                sSeqId = line[2].split(";")[0]
                 eValue = float(line[4].strip())
 
                 ##REMEMBER TO ADD FLAG OPTION FOR EITHER EVALUE OR BITSCORE MATRIX
@@ -166,24 +173,25 @@ def next_line(flag, parser, handle):
 
 
 ##add scaled score to distance matrix
-def add_to_bit_matrix(query,qLen,match,bits):
+def add_to_bit_matrix(query,qLen,match,bits,sLen):
 
     ##look up query index and match index
     query_index = names.index(query)
     match_index = names.index(match)
 
     ##convert bit score into a scaled score
-    bit_scaled_score = convert_bit_score(bits,qLen)
+    bit_scaled_score = convert_bit_score(bits,qLen,sLen)
 
-    print query ,match, bit_scaled_score
+    #print query ,match, bit_scaled_score
 
     ##Only add scaled score to matrix if it is less than default and any other comparison
-    if (bit_scaled_score < matrix[query_index][match_index] and bit_scaled_score < 5.2):
+    if (bit_scaled_score < matrix[query_index][match_index] and bit_scaled_score < 500):
         matrix[query_index][match_index] = bit_scaled_score
 
 
-def convert_bit_score(bitscore,querylength):
-    value = (math.log(.25/(bitscore/querylength))+2)
+def convert_bit_score(bitscore,querylength,matchlength):
+    divisor = min(querylength,matchlength)
+    value = (math.log(.25/(bitscore/divisor))+2)
     return value
 
 ##WORK ON THE SCALED SCORE FOR E VALUES
@@ -198,16 +206,18 @@ def add_to_e_matrix(query,qLen,match,e):
     print query ,match, e_scaled_score
 
     ##Only add scaled score to matrix if it is less than default and any other comparison
-    if (e_scaled_score < matrix[query_index][match_index] and e_scaled_score < 4):
+    if (e_scaled_score < matrix[query_index][match_index] and e_scaled_score < 500):
         matrix[query_index][match_index] = e_scaled_score
 
 def convert_e_score(evalue,querylength):
     if (evalue!=0.0):
         value = math.log(evalue,2)
+        if (value<-593.0):
+            value = -593.0
     else:
         value = -593.0
 
-    value = ((value+593.0)/300)**2
+    value = ((value+593.0)/100)**1.2
     return value
 
 ##convert numpy matrix to R matrix
@@ -249,10 +259,13 @@ def point_plotter_2d(x,y):
     text = robj.r.text
     identify = robj.r.identify
 
+    ## color array maker
+    groups = groupify(colors)
+
     ##Plot and label points
-    plot(x,y, xlab='', ylab='',pch=16)
+    plot(x,y, xlab='', ylab='',pch=16,col=groups)
     #identify(x,y,labels=names,cex=0.6,pos=4)
-    text(x, y, labels=names, cex=0.4, pos=4, col="black")
+    #text(x, y, labels=names, cex=0.4, pos=4, col="black")
 
     ##Wait for user input to end
     raw_input()
@@ -268,20 +281,32 @@ def point_plotter_3d(x,y,z):
 
 
     ##Plot and label points
-    plot(x,y,z, xlab='', ylab='',zlab='',pch=16, highlight_3d=True)
+    groups = groupify(colors)
+    plot(x,y,z, xlab='', ylab='',zlab='',pch=16)
     #identify(x,y,labels=names,cex=0.6,pos=4)
     #text(x, y, z, labels=names, cex=0.4, pos=4, col="black")
 
     ##Wait for user input to end
     raw_input()
 
+def groupify(colors):
+
+    c = robj.r.c
+
+    rcolors = robj.IntVector(())
+    for color in colors:
+        rcolors = c(rcolors,color)
+
+    return rcolors
+
+
 ##RUN THE CODE
 print "Running script..."
 bitOrE, dim = arg_parser()
 #run_blast_tab(queryname,dbname,outfile,fmt,dbsize,ecutoff)
-names = read_fasta(fastafile)
-matrix = create_matrix(bitOrE)
+names,colors = read_fasta(fastafile)
 tabParser, tabHandle = open_file(resultsfile)
+matrix = create_matrix(bitOrE)
 next_line(bitOrE,tabParser,tabHandle)
 r_mat = convert_to_r(matrix)
 mds(r_mat,dim)
