@@ -109,9 +109,9 @@ def read_fasta(fastafile):
 def create_matrix(flag):
     matrix = numpy.empty(shape=(len(names),len(names)))
     if (flag == 'b'):
-        matrix.fill(500)
+        matrix.fill(4)
     else:
-        matrix.fill(500)
+        matrix.fill(1)
     return matrix
 
 
@@ -185,7 +185,7 @@ def add_to_bit_matrix(query,qLen,match,bits,sLen):
     #print query ,match, bit_scaled_score
 
     ##Only add scaled score to matrix if it is less than default and any other comparison
-    if (bit_scaled_score < matrix[query_index][match_index] and bit_scaled_score < 500):
+    if (bit_scaled_score < matrix[query_index][match_index] and bit_scaled_score < 4):
         matrix[query_index][match_index] = bit_scaled_score
 
 
@@ -206,18 +206,25 @@ def add_to_e_matrix(query,qLen,match,e):
     print query ,match, e_scaled_score
 
     ##Only add scaled score to matrix if it is less than default and any other comparison
-    if (e_scaled_score < matrix[query_index][match_index] and e_scaled_score < 500):
+    if (e_scaled_score < matrix[query_index][match_index] and e_scaled_score < 1):
         matrix[query_index][match_index] = e_scaled_score
 
 def convert_e_score(evalue,querylength):
-    if (evalue!=0.0):
-        value = math.log(evalue,2)
-        if (value<-593.0):
-            value = -593.0
+    # if (evalue!=0.0):
+    #     value = math.log(evalue)
+    #     if (value<-593.0):
+    #         value = -593.0
+    # else:
+    #     value = -593.0
+    #
+    # value = ((value+593.0)/100)**2
+    evalue = evalue*1000
+    if (evalue < 0.000001):
+        value = 0
+    elif (evalue > 10):
+        value = 1
     else:
-        value = -593.0
-
-    value = ((value+593.0)/100)**1.2
+        value = evalue/10
     return value
 
 ##convert numpy matrix to R matrix
@@ -282,7 +289,7 @@ def point_plotter_3d(x,y,z):
 
     ##Plot and label points
     groups = groupify(colors)
-    plot(x,y,z, xlab='', ylab='',zlab='',pch=16)
+    plot(x,y,z, xlab='', ylab='',zlab='',pch=16,color=groups)
     #identify(x,y,labels=names,cex=0.6,pos=4)
     #text(x, y, z, labels=names, cex=0.4, pos=4, col="black")
 

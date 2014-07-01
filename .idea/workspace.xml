@@ -2,22 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="702cf7ce-4318-47b1-b8d1-0ed7e4419270" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/results.out" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/results.xml" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/families/superfamilies.phr" afterPath="$PROJECT_DIR$/families/superfamilies.phr" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/families/superfamilies.pin" afterPath="$PROJECT_DIR$/families/superfamilies.pin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/uniprot/uniprot.phr" afterPath="$PROJECT_DIR$/uniprot/uniprot.phr" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/uniprot/uniprot.pin" afterPath="$PROJECT_DIR$/uniprot/uniprot.pin" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MDSCluster.py" afterPath="$PROJECT_DIR$/MDSCluster.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MDScluster.bash" afterPath="$PROJECT_DIR$/MDScluster.bash" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/families/names_superfamilies" afterPath="$PROJECT_DIR$/families/names_superfamilies" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/uniprot/names_uniprot" afterPath="$PROJECT_DIR$/uniprot/names_uniprot" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/families/results.out" afterPath="$PROJECT_DIR$/families/results.out" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/uniprot/results.out" afterPath="$PROJECT_DIR$/uniprot/results.out" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/families/superfamilies.fas" afterPath="$PROJECT_DIR$/families/superfamilies.fas" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/families/superfamilies.psq" afterPath="$PROJECT_DIR$/families/superfamilies.psq" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/uniprot/uniprot.fas" afterPath="$PROJECT_DIR$/uniprot/uniprot.fas" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/uniprot/uniprot.psq" afterPath="$PROJECT_DIR$/uniprot/uniprot.psq" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="BLAST+.iws" />
@@ -44,8 +29,8 @@
       <file leaf-file-name="MDSCluster.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/MDSCluster.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-1.386256" vertical-offset="2250" max-vertical-offset="5970">
-              <caret line="111" column="23" selection-start-line="111" selection-start-column="23" selection-end-line="111" selection-end-column="23" />
+            <state vertical-scroll-proportion="0.7156398" vertical-offset="3013" max-vertical-offset="6075">
+              <caret line="221" column="25" selection-start-line="221" selection-start-column="25" selection-end-line="221" selection-end-column="25" />
               <folding>
                 <element signature="e#0#56#0" expanded="true" />
               </folding>
@@ -115,6 +100,7 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -149,7 +135,6 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -186,7 +171,7 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="BLAST+" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/MDSCluster.py" />
-      <option name="PARAMETERS" value="-b -2d" />
+      <option name="PARAMETERS" value="-e -2d" />
       <RunnerSettings RunnerId="PyDebugRunner" />
       <RunnerSettings RunnerId="PythonRunner" />
       <ConfigurationWrapper RunnerId="PyDebugRunner" />
@@ -400,6 +385,42 @@
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/MDSCluster.py">
       <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="4030" max-vertical-offset="5970">
+          <caret line="284" column="60" selection-start-line="284" selection-start-column="60" selection-end-line="284" selection-end-column="60" />
+          <folding>
+            <element signature="e#0#56#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MDScluster.bash">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="15" max-vertical-offset="180">
+          <caret line="1" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MDSCluster.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="2250" max-vertical-offset="5970">
+          <caret line="111" column="23" selection-start-line="111" selection-start-column="23" selection-end-line="111" selection-end-column="23" />
+          <folding>
+            <element signature="e#0#56#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MDScluster.bash">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="15" max-vertical-offset="180">
+          <caret line="1" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MDSCluster.py">
+      <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="150" max-vertical-offset="5535">
           <caret line="18" column="41" selection-start-line="18" selection-start-column="41" selection-end-line="18" selection-end-column="41" />
           <folding>
@@ -523,14 +544,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/MDScluster.bash">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="15" max-vertical-offset="180">
-          <caret line="1" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/FASTA/results.out">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1425">
@@ -542,14 +555,21 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="435">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MDScluster.bash">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="15" max-vertical-offset="180">
+          <caret line="1" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/MDSCluster.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-1.386256" vertical-offset="2250" max-vertical-offset="5970">
-          <caret line="111" column="23" selection-start-line="111" selection-start-column="23" selection-end-line="111" selection-end-column="23" />
+        <state vertical-scroll-proportion="0.7156398" vertical-offset="3013" max-vertical-offset="6075">
+          <caret line="221" column="25" selection-start-line="221" selection-start-column="25" selection-end-line="221" selection-end-column="25" />
           <folding>
             <element signature="e#0#56#0" expanded="true" />
           </folding>
