@@ -99,8 +99,12 @@ def read_fasta(fastafile):
     with open(fastafile) as f:
         for line in f:
             parts = line.split(";")
+            print parts[0].strip().split()[0]
             names.append(parts[0].strip().split()[0])
-            colors.append(int(parts[1]))
+            try:
+                colors.append(int(parts[1]))
+            except:
+                pass
     return names,colors
 
 
@@ -210,21 +214,25 @@ def add_to_e_matrix(query,qLen,match,e):
         matrix[query_index][match_index] = e_scaled_score
 
 def convert_e_score(evalue,querylength):
-    # if (evalue!=0.0):
-    #     value = math.log(evalue)
-    #     if (value<-593.0):
-    #         value = -593.0
-    # else:
-    #     value = -593.0
-    #
-    # value = ((value+593.0)/100)**2
-    evalue = evalue*1000
-    if (evalue < 0.000001):
-        value = 0
-    elif (evalue > 10):
-        value = 1
+    if (evalue != 0):
+        value = -math.log(evalue)
     else:
-        value = evalue/10
+        value = 400
+
+    if (value <= 1):
+        value = 1
+
+    value = (1/value)**0.4
+
+
+
+    # evalue = evalue*1000
+    # if (evalue < 0.000001):
+    #     value = 0
+    # elif (evalue > 10):
+    #     value = 1
+    # else:
+    #     value = evalue/10
     return value
 
 ##convert numpy matrix to R matrix
@@ -267,12 +275,14 @@ def point_plotter_2d(x,y):
     identify = robj.r.identify
 
     ## color array maker
-    groups = groupify(colors)
-
+    if (colors!=[]):
+        groups = groupify(colors)
+    else:
+        groups = "black"
     ##Plot and label points
-    plot(x,y, xlab='', ylab='',pch=16,col=groups)
+    plot(x,y, xlab='', ylab='',pch=16, col=groups)
     #identify(x,y,labels=names,cex=0.6,pos=4)
-    #text(x, y, labels=names, cex=0.4, pos=4, col="black")
+    #text(x, y, labels=names, cex=0.7, pos=4, col="black")
 
     ##Wait for user input to end
     raw_input()
@@ -289,7 +299,7 @@ def point_plotter_3d(x,y,z):
 
     ##Plot and label points
     groups = groupify(colors)
-    plot(x,y,z, xlab='', ylab='',zlab='',pch=16,color=groups)
+    plot(x,y,z, xlab='', ylab='',zlab='',pch=16)
     #identify(x,y,labels=names,cex=0.6,pos=4)
     #text(x, y, z, labels=names, cex=0.4, pos=4, col="black")
 
@@ -315,6 +325,7 @@ names,colors = read_fasta(fastafile)
 tabParser, tabHandle = open_file(resultsfile)
 matrix = create_matrix(bitOrE)
 next_line(bitOrE,tabParser,tabHandle)
+print "converting"
 r_mat = convert_to_r(matrix)
 mds(r_mat,dim)
 
