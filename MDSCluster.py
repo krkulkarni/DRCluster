@@ -1,13 +1,24 @@
-from Bio.Blast.Applications import NcbiblastpCommandline
-from Bio.Blast import NCBIXML
 import math
 import csv
+import sys
+import argparse
+import h5py
+import nystrom
+import time
+
+
+from Bio.Blast.Applications import NcbiblastpCommandline
 import numpy
-import re
-import sys, argparse
 import rpy2.robjects as robj
 from rpy2.robjects.packages import importr
+
+
 plot3d = importr("scatterplot3d")
+## for 3D plotting
+MASS = importr("MASS")
+## for non-metric MDS
+rhdf5 = importr("rhdf5")
+## for reading hdf matrix in R
 
 
 ##
@@ -16,8 +27,8 @@ plot3d = importr("scatterplot3d")
 
 __author__ = "kulkarnik"
 
-resultsfile = "newfas/results.out"
-fastafile = "newfas/names_mainfam"
+resultsfile = "/Users/kulkarnik/Research/MDSCluster_2014/BLAST+/newfas/results.out"
+fastafile = "/Users/kulkarnik/Research/MDSCluster_2014/BLAST+/newfas/names_mainfam"
 
 queryname = "~/BLAST+/uniprot/uniprot.fas"
 dbname = "~/BLAST+/uniprot/uniprot"
@@ -47,6 +58,11 @@ def arg_parser():
     dimension.add_argument('-2d','--twod',help="Chooses the 2D plot function", action="store_true", required = False)
     dimension.add_argument('-3d','--threed', help="Chooses the 3D plot function", action="store_true", required = False)
 
+    mdstype = paraParser.add_mutually_exclusive_group()
+    mdstype.add_argument('-cmds','--classical',help="Chooses the classical MDS algorithm",action="store_true",required=False)
+    mdstype.add_argument('-nmmds','--nonmetric',help="Chooses the non-metric MDS algorithm",action="store_true",required=False)
+
+
     args = paraParser.parse_args()
 
     ## These statements force user to choose one of either the -b or -e options,
@@ -67,8 +83,16 @@ def arg_parser():
         print "Error, must pick -2d or -3d flag"
         sys.exit(3)
 
+    if (args.classical == True):
+        mds = "cmds"
+    elif (args.nonmetric == True):
+        mds = "nmmds"
+    else:
+        print "Error, must pick -cmds or -nmmds flag"
+        sys.exit(3)
+
     ## return arguments for later use
-    return bitOrE, dim
+    return bitOrE, dim, mds
 
 ##Set up the command for protein blast.
 ##Format 'blastp -query inputfile -db database -out tabfile -outfmt "6 qseqid qlen sseqid slen evalue bitscore" -dbsize 1000000'
@@ -99,7 +123,6 @@ def read_fasta(fastafile):
     with open(fastafile) as f:
         for line in f:
             parts = line.split(";")
-            print parts[0].strip().split()[0]
             names.append(parts[0].strip().split()[0])
             try:
                 colors.append(int(parts[1]))
@@ -111,12 +134,18 @@ def read_fasta(fastafile):
 ##Create the distance matrix
 ##Initialize with 4 (the farthest possible value)
 def create_matrix(flag):
-    matrix = numpy.empty(shape=(len(names),len(names)))
+
+    h5create = robj.r.h5createFile
+    h5create("mds.h5")
+    f = h5py.File("mds.h5","w")
     if (flag == 'b'):
-        matrix.fill(4)
+        dset = f.create_dataset("hdfmat.h5",shape=(len(names),len(names)),fillvalue=1.0)
+
     else:
-        matrix.fill(1)
-    return matrix
+        dset = f.create_dataset("hdfmat.h5",shape=(len(names),len(names)),fillvalue=1.0)
+
+
+    return dset
 
 
 ##
@@ -186,17 +215,17 @@ def add_to_bit_matrix(query,qLen,match,bits,sLen):
     ##convert bit score into a scaled score
     bit_scaled_score = convert_bit_score(bits,qLen,sLen)
 
-    #print query ,match, bit_scaled_score
+    print query ,match, bit_scaled_score
 
     ##Only add scaled score to matrix if it is less than default and any other comparison
-    if (bit_scaled_score < matrix[query_index][match_index] and bit_scaled_score < 4):
-        matrix[query_index][match_index] = bit_scaled_score
+    if (bit_scaled_score < hdfmat[query_index,match_index] and bit_scaled_score < 3):
+        hdfmat[query_index,match_index] = bit_scaled_score
 
 
 def convert_bit_score(bitscore,querylength,matchlength):
     divisor = min(querylength,matchlength)
     value = (math.log(.25/(bitscore/divisor))+2)
-    return value
+    return abs(value)
 
 ##WORK ON THE SCALED SCORE FOR E VALUES
 def add_to_e_matrix(query,qLen,match,e):
@@ -207,11 +236,12 @@ def add_to_e_matrix(query,qLen,match,e):
     ##convert bit score into a scaled score
     e_scaled_score = convert_e_score(e,qLen)
 
-    print query ,match, e_scaled_score
+    #print query ,match, e_scaled_score
 
     ##Only add scaled score to matrix if it is less than default and any other comparison
-    if (e_scaled_score < matrix[query_index][match_index] and e_scaled_score < 1):
-        matrix[query_index][match_index] = e_scaled_score
+    if (e_scaled_score < hdfmat[query_index,match_index] and e_scaled_score < 1):
+
+        hdfmat[query_index,match_index] = e_scaled_score
 
 def convert_e_score(evalue,querylength):
     if (evalue != 0):
@@ -244,13 +274,23 @@ def convert_to_r(mat):
 
 
 ##perform the MDS on R matrix
-def mds(r_matrix,dim):
+def mds(r_matrix,dim,mdstype):
     ##Define the R functions
-    cmd_scale = robj.r.cmdscale
+    isoMDS = robj.r.isoMDS
+    cmdscale = robj.r.cmdscale
+    print mdstype
+
 
     if (dim==2):
         ## MDS with 2 dimensions (default)
-        points = cmd_scale(r_matrix)
+        if (mdstype == "nmmds"):
+            data = isoMDS(r_matrix,k=2)
+            points = data.rx2(1)
+            stress = data.rx2(2)
+            print stress
+        else:
+            points = cmdscale(r_matrix,k=2)
+
         x = points.rx(True,1)
         y = points.rx(True,2)
 
@@ -259,7 +299,14 @@ def mds(r_matrix,dim):
 
     elif (dim==3):
         ## MDS with 3 dimensions
-        points = cmd_scale(r_matrix,k=3)
+        if (mdstype == "nmmds"):
+            data = isoMDS(r_matrix,k=3)
+            points = data.rx2(1)
+            stress = data.rx2(2)
+            print stress
+        else:
+            points = cmdscale(r_matrix,k=3)
+
         x = points.rx(True,1)
         y = points.rx(True,2)
         z = points.rx(True,3)
@@ -285,6 +332,7 @@ def point_plotter_2d(x,y):
     #text(x, y, labels=names, cex=0.7, pos=4, col="black")
 
     ##Wait for user input to end
+    print "Took", time.clock()-t0, "seconds"
     raw_input()
 
 def point_plotter_3d(x,y,z):
@@ -318,16 +366,35 @@ def groupify(colors):
 
 
 ##RUN THE CODE
+t0 = time.clock()
 print "Running script..."
-bitOrE, dim = arg_parser()
+bitOrE, dim, mdstype = arg_parser()
+print "Parsed arguments"
+
 #run_blast_tab(queryname,dbname,outfile,fmt,dbsize,ecutoff)
 names,colors = read_fasta(fastafile)
+print "Read FASTA file"
+
 tabParser, tabHandle = open_file(resultsfile)
-matrix = create_matrix(bitOrE)
+print "Opened file"
+
+hdfmat = create_matrix(bitOrE)
+print "Initialized matrix"
+
+print "Parsing results"
 next_line(bitOrE,tabParser,tabHandle)
-print "converting"
-r_mat = convert_to_r(matrix)
-mds(r_mat,dim)
+
+print "Converting to numpy array"
+## convert hdf5 array to numpy
+numpyarr = hdfmat[:]
+
+print "Converting"
+r_mat = convert_to_r(numpyarr)
+print "Done converting"
+
+print "Performing MDS"
+mds(r_mat,dim,mdstype)
+
 
 
 
