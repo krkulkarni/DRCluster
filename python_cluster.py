@@ -6,21 +6,7 @@ import h5py
 import approximate_mds
 import matplotlib.pyplot as plt
 import time
-
-
-from Bio.Blast.Applications import NcbiblastpCommandline
-import numpy
-import rpy2.robjects as robj
-from rpy2.robjects.packages import importr
-
-
-plot3d = importr("scatterplot3d")
-## for 3D plotting
-MASS = importr("MASS")
-## for non-metric MDS
-rhdf5 = importr("rhdf5")
-## for reading hdf matrix in R
-
+from sklearn import manifold
 
 ##
 ##GLOBAL VARIABLES
@@ -28,8 +14,8 @@ rhdf5 = importr("rhdf5")
 
 __author__ = "kulkarnik"
 
-resultsfile = "/Users/kulkarnik/Research/MDSCluster_2014/BLAST+/newfas/results.out"
-fastafile = "/Users/kulkarnik/Research/MDSCluster_2014/BLAST+/newfas/names_mainfam"
+resultsfile = "/Users/kulkarnik/Research/MDSCluster_2014/BLAST+/jul_17_names/results.out"
+fastafile = "/Users/kulkarnik/Research/MDSCluster_2014/BLAST+/jul_17_names/names_new"
 
 ##
 ## Set up the argument parser using the argparse module
@@ -51,8 +37,8 @@ def arg_parser():
     dimension.add_argument('-3d','--threed', help="Chooses the 3D plot function", action="store_true", required = False)
 
     mdstype = paraParser.add_mutually_exclusive_group()
-    mdstype.add_argument('-cmds','--classical',help="Chooses the classical MDS algorithm",action="store_true",required=False)
-    mdstype.add_argument('-nmmds','--nonmetric',help="Chooses the non-metric MDS algorithm",action="store_true",required=False)
+    mdstype.add_argument('-c','--classical',help="Chooses the classical MDS algorithm",action="store_true",required=False)
+    mdstype.add_argument('-m','--metric',help="Chooses the non-metric MDS algorithm",action="store_true",required=False)
 
 
     args = paraParser.parse_args()
@@ -76,11 +62,11 @@ def arg_parser():
         sys.exit(3)
 
     if (args.classical == True):
-        mds = "cmds"
-    elif (args.nonmetric == True):
-        mds = "nmmds"
+        mds = "c"
+    elif (args.metric == True):
+        mds = "m"
     else:
-        print "Error, must pick -cmds or -nmmds flag"
+        print "Error, must pick -classical or -metric flag"
         sys.exit(3)
 
     ## return arguments for later use
@@ -104,17 +90,11 @@ def read_fasta(fastafile):
 ##Create the distance matrix
 ##Initialize with 4 (the farthest possible value)
 def create_matrix(flag):
-
-    h5create = robj.r.h5createFile
-    h5create("mds.h5")
     f = h5py.File("mds.h5","w")
     if (flag == 'b'):
-        dset = f.create_dataset("hdfmat.h5",shape=(len(names),len(names)),fillvalue=1.0)
-
+        dset = f.create_dataset("hdfmat.h5",shape=(len(names),len(names)),fillvalue=4)
     else:
-        dset = f.create_dataset("hdfmat.h5",shape=(len(names),len(names)),fillvalue=1.0)
-
-
+        dset = f.create_dataset("hdfmat.h5",shape=(len(names),len(names)),fillvalue=1)
     return dset
 
 
@@ -185,11 +165,12 @@ def add_to_bit_matrix(query,qLen,match,bits,sLen):
     ##convert bit score into a scaled score
     bit_scaled_score = convert_bit_score(bits,qLen,sLen)
 
-    print query ,match, bit_scaled_score
+    #print query ,match, bit_scaled_score
 
     ##Only add scaled score to matrix if it is less than default and any other comparison
-    if (bit_scaled_score < hdfmat[query_index,match_index] and bit_scaled_score < 3):
+    if (hdfmat[query_index,match_index]>=4):
         hdfmat[query_index,match_index] = bit_scaled_score
+        hdfmat[match_index,query_index] = bit_scaled_score
 
 
 def convert_bit_score(bitscore,querylength,matchlength):
@@ -209,9 +190,9 @@ def add_to_e_matrix(query,qLen,match,e):
     #print query ,match, e_scaled_score
 
     ##Only add scaled score to matrix if it is less than default and any other comparison
-    if (e_scaled_score < hdfmat[query_index,match_index] and e_scaled_score < 1):
-
+    if (hdfmat[query_index,match_index]>=1):
         hdfmat[query_index,match_index] = e_scaled_score
+        hdfmat[match_index,query_index] = e_scaled_score
 
 def convert_e_score(evalue,querylength):
     if (evalue != 0):
@@ -222,7 +203,7 @@ def convert_e_score(evalue,querylength):
     if (value <= 1):
         value = 1
 
-    value = (1/value)**0.4
+    value = (1/value)**0.3
 
 
 
@@ -235,83 +216,53 @@ def convert_e_score(evalue,querylength):
     #     value = evalue/10
     return value
 
-##convert numpy matrix to R matrix
-def convert_to_r(mat):
-    nr, nc = mat.shape
-    mat_vec = robj.FloatVector(mat.transpose().reshape((mat.size)))
-    r_mat = robj.r.matrix(mat_vec, nrow=nr, ncol=nc)
-    return r_mat
-
+def getdist(i,j):
+    return hdfmat[i,j]
 
 ##perform the MDS on HDF5 matrix
-def mds(matrix,dim):
-
+def cmds(matrix,dim):
     if (dim==2):
         ## MDS with 2 dimensions (default)
-
         (newmat,eig) = approximate_mds.cmds_tzeng(matrix,dim=2)
-
         ## call plotter with a 2D graph
-
         return newmat
-
     elif (dim==3):
         ## MDS with 3 dimensions
-
         (newmat,eig) = approximate_mds.cmds_tzeng(matrix,dim=3)
-
         ## call plotter with 3D graph
         return newmat
 
+def nystrom_frontend(num_objects, num_seeds, dim, dist_func,permute_order=True):
+    (seed_mat,restore_ids) = approximate_mds.build_seed_matrix(num_objects,num_seeds,dist_func,permute_order)
+    mdscoords = approximate_mds.nystrom(seed_mat,dim)
+    return mdscoords[restore_ids]
 
-def point_plotter_2d(x,y):
-    ##Define the R functions
-    plot = robj.r.plot
-    text = robj.r.text
-    identify = robj.r.identify
+def metric_mds(mat):
+    nmds = manifold.MDS(n_components=2, metric=True, max_iter=300,dissimilarity="precomputed", n_jobs=1,n_init=1,random_state=1)
+    coords = nmds.fit(mat).embedding_
+    return coords
 
-    ## color array maker
-    if (colors!=[]):
-        groups = groupify(colors)
-    else:
-        groups = "black"
-    ##Plot and label points
-    plot(x,y, xlab='', ylab='',pch=16, col=groups)
-    #identify(x,y,labels=names,cex=0.6,pos=4)
-    #text(x, y, labels=names, cex=0.7, pos=4, col="black")
-
-    ##Wait for user input to end
-    raw_input()
-
-def point_plotter_3d(x,y,z):
-    ##Define the R functions
-    plot = robj.r.scatterplot3d
-    colors = robj.r.rainbow(201)
-    col2rgb = robj.r.col2rgb
-    t = robj.r.t
-    text = robj.r.text
-    identify = robj.r.identify
+def pyplotter2d(finalmat,mdstype,colors):
+    if (mdstype == 'm'):
+        x_points = finalmat[:,0]
+        y_points = finalmat[:,1]
+    elif (mdstype == 'c'):
+        x_points = []
+        y_points = []
+        for pair in matrix:
+            end = len(str(pair))
+            x_points.append(str(pair)[2:end-2].strip().split()[0])
+            y_points.append(str(pair)[2:end-2].strip().split()[1])
 
 
-    ##Plot and label points
-    groups = groupify(colors)
-    plot(x,y,z, xlab='', ylab='',zlab='',pch=16)
-    #identify(x,y,labels=names,cex=0.6,pos=4)
-    #text(x, y, z, labels=names, cex=0.4, pos=4, col="black")
+    fig, ax = plt.subplots()
+    if (colors == []):
+        colors = 'b'
+    ax.scatter(x_points, y_points,c=colors)
 
-    ##Wait for user input to end
-    raw_input()
-
-def groupify(colors):
-
-    c = robj.r.c
-
-    rcolors = robj.IntVector(())
-    for color in colors:
-        rcolors = c(rcolors,color)
-
-    return rcolors
-
+    print len(names)
+    print "Took", time.clock()-t0, "seconds"
+    plt.show()
 
 ##RUN THE CODE
 t0 = time.clock()
@@ -332,35 +283,17 @@ print "Initialized matrix"
 print "Parsing results"
 next_line(bitOrE,tabParser,tabHandle)
 
-print "Converting to numpy array"
-## convert hdf5 array to numpy
-numpyarr = hdfmat[:]
 
 print "Performing MDS"
-matrix = mds(hdfmat[...],dim)
-print matrix
+if (mdstype == "m"):
+    matrix = metric_mds(hdfmat)
+elif (mdstype == "c"):
+    matrix = cmds(hdfmat,dim)
 
-fig = plt.figure()
-ax = fig.add_subplot(111)
-x_points = []
-y_points = []
-for pair in matrix:
-    end = len(str(pair))
-    x_points.append(str(pair)[2:end-2].strip().split()[0])
-    y_points.append(str(pair)[2:end-2].strip().split()[1])
+#matrix = nystrom_frontend(len(names),math.sqrt(len(names)),2,getdist)
 
+pyplotter2d(matrix,mdstype,colors)
 
-
-p = ax.plot(x_points, y_points, 'ro')
-ax.set_xlabel('x-points')
-ax.set_ylabel('y-points')
-ax.set_title('Simple XY point plot')
-fig.show()
-
-print "Took", time.clock()-t0, "seconds"
-raw_input()
-
-r_mat = convert_to_r(numpyarr)
 
 
 

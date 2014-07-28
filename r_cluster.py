@@ -215,7 +215,7 @@ def add_to_bit_matrix(query,qLen,match,bits,sLen):
     ##convert bit score into a scaled score
     bit_scaled_score = convert_bit_score(bits,qLen,sLen)
 
-    print query ,match, bit_scaled_score
+    #print query ,match, bit_scaled_score
 
     ##Only add scaled score to matrix if it is less than default and any other comparison
     if (bit_scaled_score < hdfmat[query_index,match_index] and bit_scaled_score < 3):
