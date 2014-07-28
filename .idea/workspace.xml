@@ -2,28 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="702cf7ce-4318-47b1-b8d1-0ed7e4419270" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/nystrom.py" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/db/sample.fas" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/db/sample.phr" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/db/sample.pin" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/db/sample.psq" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/families/tmpblasthsp.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/fasta2names" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ubfam/names_ubfam" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ubfam/results.out" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ubfam/ub.fas" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ubfam/ub_top_50.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ubfam/ubfam.phr" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ubfam/ubfam.pin" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ubfam/ubfam.psq" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/uniprot/forclans" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/uniprot/names_uniprot" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/uniprot/results.out" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/uniprot/uniprot.fas" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/uniprot/uniprot.phr" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/uniprot/uniprot.pin" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/uniprot/uniprot.psq" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MDSCluster.py" afterPath="$PROJECT_DIR$/MDSCluster.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/fastmap.py" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/MDSCluster.py" afterPath="$PROJECT_DIR$/r_cluster.py" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/h5pytest.py" afterPath="$PROJECT_DIR$/python_cluster.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/mds.h5" afterPath="$PROJECT_DIR$/mds.h5" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/approximate_mds.py" afterPath="$PROJECT_DIR$/approximate_mds.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="BLAST+.iws" />
@@ -47,11 +30,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="MDSCluster.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/MDSCluster.py">
+      <file leaf-file-name="r_cluster.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/r_cluster.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="4813" max-vertical-offset="7245">
-              <caret line="334" column="43" selection-start-line="334" selection-start-column="43" selection-end-line="334" selection-end-column="43" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="3120" max-vertical-offset="7245">
+              <caret line="217" column="5" selection-start-line="217" selection-start-column="5" selection-end-line="217" selection-end-column="5" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
               </folding>
@@ -59,11 +42,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="h5pytest.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/h5pytest.py">
+      <file leaf-file-name="python_cluster.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/python_cluster.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="5038" max-vertical-offset="5595">
-              <caret line="359" column="40" selection-start-line="359" selection-start-column="40" selection-end-line="359" selection-end-column="40" />
+            <state vertical-scroll-proportion="-9.807693" vertical-offset="0" max-vertical-offset="4590">
+              <caret line="17" column="84" selection-start-line="17" selection-start-column="84" selection-end-line="17" selection-end-column="84" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
               </folding>
@@ -74,38 +57,8 @@
       <file leaf-file-name="approximate_mds.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/approximate_mds.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="4.5501223" vertical-offset="11954" max-vertical-offset="14265">
-              <caret line="926" column="30" selection-start-line="926" selection-start-column="30" selection-end-line="926" selection-end-column="30" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="nystrom.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/nystrom.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="210">
-              <caret line="5" column="14" selection-start-line="5" selection-start-column="14" selection-end-line="5" selection-end-column="14" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="names_superfamilies" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/families/names_superfamilies">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="90" max-vertical-offset="345">
-              <caret line="6" column="19" selection-start-line="6" selection-start-column="19" selection-end-line="6" selection-end-column="19" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="MDScluster.bash" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/MDScluster.bash">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="15" max-vertical-offset="180">
-              <caret line="1" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.6625917" vertical-offset="9749" max-vertical-offset="14280">
+              <caret line="673" column="24" selection-start-line="673" selection-start-column="24" selection-end-line="673" selection-end-column="24" />
               <folding />
             </state>
           </provider>
@@ -130,6 +83,8 @@
         <option value="$PROJECT_DIR$/families/names_superfamilies" />
         <option value="$PROJECT_DIR$/labelnames.py" />
         <option value="$PROJECT_DIR$/nystrom.py" />
+        <option value="$PROJECT_DIR$/approximate_mds.py" />
+        <option value="$PROJECT_DIR$/fastmap.py" />
         <option value="$PROJECT_DIR$/MDSCluster.py" />
         <option value="$PROJECT_DIR$/h5pytest.py" />
       </list>
@@ -210,8 +165,8 @@
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.h5pytest">
-    <configuration default="false" name="MDSCluster" type="PythonConfigurationType" factoryName="Python" editBeforeRun="true" temporary="true">
+  <component name="RunManager" selected="Python.python_cluster">
+    <configuration default="false" name="r_cluster" type="PythonConfigurationType" factoryName="Python" editBeforeRun="true" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -223,8 +178,8 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="BLAST+" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/MDSCluster.py" />
-      <option name="PARAMETERS" value="-e -2d -cmds" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/r_cluster.py" />
+      <option name="PARAMETERS" value="-e -2d -nmmds" />
       <RunnerSettings RunnerId="PyDebugRunner" />
       <RunnerSettings RunnerId="PythonRunner" />
       <ConfigurationWrapper RunnerId="PyDebugRunner" />
@@ -249,7 +204,7 @@
       <ConfigurationWrapper RunnerId="PythonRunner" />
       <method />
     </configuration>
-    <configuration default="false" name="h5pytest" type="PythonConfigurationType" factoryName="Python" editBeforeRun="true" temporary="true">
+    <configuration default="false" name="python_cluster" type="PythonConfigurationType" factoryName="Python" editBeforeRun="true" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -261,8 +216,8 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="BLAST+" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/h5pytest.py" />
-      <option name="PARAMETERS" value="-e -2d -cmds" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/python_cluster.py" />
+      <option name="PARAMETERS" value="-e -2d -m" />
       <RunnerSettings RunnerId="PythonRunner" />
       <ConfigurationWrapper RunnerId="PythonRunner" />
       <method />
@@ -408,14 +363,14 @@
     </configuration>
     <list size="4">
       <item index="0" class="java.lang.String" itemvalue="Python.Nystrom" />
-      <item index="1" class="java.lang.String" itemvalue="Python.MDSCluster" />
+      <item index="1" class="java.lang.String" itemvalue="Python.r_cluster" />
       <item index="2" class="java.lang.String" itemvalue="Python.approximate_mds" />
-      <item index="3" class="java.lang.String" itemvalue="Python.h5pytest" />
+      <item index="3" class="java.lang.String" itemvalue="Python.python_cluster" />
     </list>
     <recent_temporary>
       <list size="3">
-        <item index="0" class="java.lang.String" itemvalue="Python.h5pytest" />
-        <item index="1" class="java.lang.String" itemvalue="Python.MDSCluster" />
+        <item index="0" class="java.lang.String" itemvalue="Python.python_cluster" />
+        <item index="1" class="java.lang.String" itemvalue="Python.r_cluster" />
         <item index="2" class="java.lang.String" itemvalue="Python.approximate_mds" />
       </list>
     </recent_temporary>
@@ -434,7 +389,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="11" y="29" width="1260" height="760" extended-state="0" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -444,7 +399,7 @@
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39942113" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3299566" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3299566" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3299566" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -475,22 +430,6 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/approximate_mds.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="1575" max-vertical-offset="14340">
-          <caret line="105" column="26" selection-start-line="105" selection-start-column="26" selection-end-line="105" selection-end-column="26" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/families/names_superfamilies">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="90" max-vertical-offset="345">
-          <caret line="6" column="19" selection-start-line="6" selection-start-column="19" selection-end-line="6" selection-end-column="19" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/MDScluster.bash">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="15" max-vertical-offset="180">
@@ -499,7 +438,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/MDSCluster.py">
+    <entry file="file://$PROJECT_DIR$/r_cluster.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="60" max-vertical-offset="6870">
           <caret line="12" column="21" selection-start-line="12" selection-start-column="21" selection-end-line="12" selection-end-column="21" />
@@ -525,7 +464,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/MDSCluster.py">
+    <entry file="file://$PROJECT_DIR$/r_cluster.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="180" max-vertical-offset="6990">
           <caret line="12" column="21" selection-start-line="12" selection-start-column="21" selection-end-line="12" selection-end-column="21" />
@@ -551,7 +490,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/MDSCluster.py">
+    <entry file="file://$PROJECT_DIR$/r_cluster.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="105" max-vertical-offset="6885">
           <caret line="20" column="81" selection-start-line="20" selection-start-column="81" selection-end-line="20" selection-end-column="81" />
@@ -577,7 +516,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/MDSCluster.py">
+    <entry file="file://$PROJECT_DIR$/r_cluster.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="1140" max-vertical-offset="6585">
           <caret line="84" column="27" selection-start-line="84" selection-start-column="27" selection-end-line="84" selection-end-column="27" />
@@ -603,7 +542,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/MDSCluster.py">
+    <entry file="file://$PROJECT_DIR$/r_cluster.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="1425" max-vertical-offset="6375">
           <caret line="319" column="0" selection-start-line="319" selection-start-column="0" selection-end-line="319" selection-end-column="0" />
@@ -629,7 +568,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/MDSCluster.py">
+    <entry file="file://$PROJECT_DIR$/r_cluster.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="1140" max-vertical-offset="6165">
           <caret line="90" column="57" selection-start-line="90" selection-start-column="57" selection-end-line="90" selection-end-column="57" />
@@ -655,7 +594,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/MDSCluster.py">
+    <entry file="file://$PROJECT_DIR$/r_cluster.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="4050" max-vertical-offset="6045">
           <caret line="278" column="44" selection-start-line="278" selection-start-column="44" selection-end-line="278" selection-end-column="44" />
@@ -681,7 +620,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/MDSCluster.py">
+    <entry file="file://$PROJECT_DIR$/r_cluster.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="3013" max-vertical-offset="6075">
           <caret line="221" column="25" selection-start-line="221" selection-start-column="25" selection-end-line="221" selection-end-column="25" />
@@ -699,7 +638,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/MDSCluster.py">
+    <entry file="file://$PROJECT_DIR$/r_cluster.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="3013" max-vertical-offset="6075">
           <caret line="221" column="25" selection-start-line="221" selection-start-column="25" selection-end-line="221" selection-end-column="25" />
@@ -717,7 +656,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/MDSCluster.py">
+    <entry file="file://$PROJECT_DIR$/r_cluster.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="4030" max-vertical-offset="5970">
           <caret line="284" column="60" selection-start-line="284" selection-start-column="60" selection-end-line="284" selection-end-column="60" />
@@ -735,7 +674,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/MDSCluster.py">
+    <entry file="file://$PROJECT_DIR$/r_cluster.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="2250" max-vertical-offset="5970">
           <caret line="111" column="23" selection-start-line="111" selection-start-column="23" selection-end-line="111" selection-end-column="23" />
@@ -753,7 +692,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/MDSCluster.py">
+    <entry file="file://$PROJECT_DIR$/r_cluster.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="150" max-vertical-offset="5535">
           <caret line="18" column="41" selection-start-line="18" selection-start-column="41" selection-end-line="18" selection-end-column="41" />
@@ -771,7 +710,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/MDSCluster.py">
+    <entry file="file://$PROJECT_DIR$/r_cluster.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="1980" max-vertical-offset="5655">
           <caret line="156" column="32" selection-start-line="156" selection-start-column="32" selection-end-line="156" selection-end-column="32" />
@@ -789,7 +728,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/MDSCluster.py">
+    <entry file="file://$PROJECT_DIR$/r_cluster.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="3598" max-vertical-offset="5595">
           <caret line="254" column="4" selection-start-line="254" selection-start-column="4" selection-end-line="254" selection-end-column="4" />
@@ -799,7 +738,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/MDSCluster.py">
+    <entry file="file://$PROJECT_DIR$/r_cluster.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="1140" max-vertical-offset="5220">
           <caret line="84" column="51" selection-start-line="84" selection-start-column="51" selection-end-line="84" selection-end-column="51" />
@@ -809,7 +748,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/MDSCluster.py">
+    <entry file="file://$PROJECT_DIR$/r_cluster.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="2610" max-vertical-offset="4140">
           <caret line="200" column="14" selection-start-line="200" selection-start-column="14" selection-end-line="200" selection-end-column="14" />
@@ -819,7 +758,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/MDSCluster.py">
+    <entry file="file://$PROJECT_DIR$/r_cluster.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="345" max-vertical-offset="4155">
           <caret line="23" column="14" selection-start-line="23" selection-start-column="14" selection-end-line="23" selection-end-column="14" />
@@ -829,7 +768,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/MDSCluster.py">
+    <entry file="file://$PROJECT_DIR$/r_cluster.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="1140" max-vertical-offset="4155">
           <caret line="82" column="17" selection-start-line="82" selection-start-column="17" selection-end-line="82" selection-end-column="17" />
@@ -839,7 +778,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/MDSCluster.py">
+    <entry file="file://$PROJECT_DIR$/r_cluster.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="2295" max-vertical-offset="2820">
           <caret line="167" column="13" selection-start-line="167" selection-start-column="13" selection-end-line="167" selection-end-column="13" />
@@ -856,26 +795,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/families/names_superfamilies">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="345">
-          <caret line="6" column="19" selection-start-line="6" selection-start-column="19" selection-end-line="6" selection-end-column="19" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file:///usr/local/Cellar/python/2.7.7_1/Frameworks/Python.framework/Versions/2.7/lib/python2.7/random.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.33333334" vertical-offset="4625" max-vertical-offset="13590">
           <caret line="325" column="0" selection-start-line="325" selection-start-column="0" selection-end-line="325" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/MDScluster.bash">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="15" max-vertical-offset="180">
-          <caret line="1" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -887,20 +810,38 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/MDSCluster.py">
+    <entry file="file:///usr/local/Cellar/python/2.7.7_1/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/matplotlib/lines.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="4813" max-vertical-offset="7245">
-          <caret line="334" column="43" selection-start-line="334" selection-start-column="43" selection-end-line="334" selection-end-column="43" />
+        <state vertical-scroll-proportion="0.33333334" vertical-offset="15155" max-vertical-offset="19035">
+          <caret line="1037" column="0" selection-start-line="1037" selection-start-column="0" selection-end-line="1037" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fastmap.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3060">
+          <caret line="15" column="0" selection-start-line="15" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
+          <folding>
+            <element signature="e#538#549#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/r_cluster.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="3120" max-vertical-offset="7245">
+          <caret line="217" column="5" selection-start-line="217" selection-start-column="5" selection-end-line="217" selection-end-column="5" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/h5pytest.py">
+    <entry file="file://$PROJECT_DIR$/python_cluster.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="5038" max-vertical-offset="5595">
-          <caret line="359" column="40" selection-start-line="359" selection-start-column="40" selection-end-line="359" selection-end-column="40" />
+        <state vertical-scroll-proportion="-9.807693" vertical-offset="0" max-vertical-offset="4590">
+          <caret line="17" column="84" selection-start-line="17" selection-start-column="84" selection-end-line="17" selection-end-column="84" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
           </folding>
@@ -909,16 +850,32 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/nystrom.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="255">
+        <state vertical-scroll-proportion="0.06896552" vertical-offset="0" max-vertical-offset="435">
           <caret line="5" column="14" selection-start-line="5" selection-start-column="14" selection-end-line="5" selection-end-column="14" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/families/names_superfamilies">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.20689656" vertical-offset="0" max-vertical-offset="435">
+          <caret line="6" column="19" selection-start-line="6" selection-start-column="19" selection-end-line="6" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MDScluster.bash">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.036585364" vertical-offset="0" max-vertical-offset="410">
+          <caret line="1" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/approximate_mds.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="4.5501223" vertical-offset="11954" max-vertical-offset="14265">
-          <caret line="926" column="30" selection-start-line="926" selection-start-column="30" selection-end-line="926" selection-end-column="30" />
+        <state vertical-scroll-proportion="0.6625917" vertical-offset="9749" max-vertical-offset="14280">
+          <caret line="673" column="24" selection-start-line="673" selection-start-column="24" selection-end-line="673" selection-end-column="24" />
           <folding />
         </state>
       </provider>

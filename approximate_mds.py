@@ -382,9 +382,9 @@ def cmds_tzeng(distmat, dim = None):
     Tzeng J et al. (2008), PMID: 18394154
     """
           
-    if not isinstance(distmat, ndarray):
-        raise ValueError, \
-            "Input matrix is not a ndarray"
+    # if not isinstance(distmat, ndarray):
+    #     raise ValueError, \
+    #         "Input matrix is not a ndarray"
     (m, n) = distmat.shape
     if m != n:
         raise ValueError, \
@@ -394,8 +394,8 @@ def cmds_tzeng(distmat, dim = None):
 
     # power goes wrong here if distmat is ndarray because of matrix
     # multiplication syntax difference between array and
-    # matrix. (doesn't affect gower's variant). be on the safe side
-    # and convert explicitely (it's local only):
+    # matrix. (doesn't affect power's variant). be on the safe side
+    # and convert explicitly (it's local only):
     distmat = matrix(distmat)
 
     h = eye(n) - ones((n, n))/n
@@ -638,9 +638,9 @@ def build_seed_matrix(fullmat_dim, seedmat_dim, getdist, permute_order=True):
         raise ValueError, "distance getter function not callable"
 
     if permute_order:
-        picked_seeds = sample(range(fullmat_dim), seedmat_dim)
+        picked_seeds = sample(range(fullmat_dim), int(seedmat_dim))
     else:
-        picked_seeds = range(seedmat_dim)
+        picked_seeds = range(int(seedmat_dim))
     #assert len(picked_seeds) == seedmat_dim, (
     #    "mismatch between number of picked seeds and seedmat dim.")
 
@@ -671,6 +671,7 @@ def build_seed_matrix(fullmat_dim, seedmat_dim, getdist, permute_order=True):
 
 
     restore_idxs = argsort(used_index_order)
+    PRINT_TIMINGS = True
     if PRINT_TIMINGS:
         print("TIMING(%s): Seedmat calculation took %f CPU secs" % 
               (__name__, time.clock() - t0))
@@ -812,7 +813,7 @@ Nystrom example implamentation:
        callable distance function. arguments should be i,j, with index
        range 0..num_objects-1
     - `permute_order`:
-       permute order of objects. recommended to avoid caveeats with
+       permute order of objects. recommended to avoid caveats with
        ordered data that might lead to distorted results. permutation
        is random. run several times for benchmarking.
        
