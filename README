@@ -1,1 +1,13 @@
 This program runs an MDS clustering program.
+
+Required modules:
+
+lib package
+argparse
+h5py (with HDF5)
+sklearn (with numpy, scipy)
+matplotlib (with mpl_toolkits)
+csv
+sys
+time
+math

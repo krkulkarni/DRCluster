@@ -113,7 +113,7 @@ def add_to_e_matrix(query,match,e,names,hdfmat):
     #print query ,match, e_scaled_score
 
     ##Only add scaled score to matrix if it is less than default and any other comparison
-    if (hdfmat[query_index,match_index]>=1):
+    if hdfmat[query_index,match_index] >= 1:
         hdfmat[query_index,match_index] = e_scaled_score
         hdfmat[match_index,query_index] = e_scaled_score
 

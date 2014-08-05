@@ -1,5 +1,4 @@
 import approximate_mds
-from distance_transform import dist_euclidean
 from numpy import array, random
 from random import sample
 

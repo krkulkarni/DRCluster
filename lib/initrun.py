@@ -27,13 +27,19 @@ def open_file(filename):
 
 ##Create the distance matrix
 ##Initialize with 4 (the farthest possible value)
-def create_matrix(flag,names):
-    f = h5py.File("mds.h5","w")
+def create_matrix(flag,names,matrixpath):
+    f = h5py.File(matrixpath,"w")
     if (flag == 'b'):
-        dset = f.create_dataset("hdfmat.h5",shape=(len(names),len(names)),fillvalue=4)
+        dset = f.create_dataset("dataset",shape=(len(names),len(names)),fillvalue=4)
     else:
-        dset = f.create_dataset("hdfmat.h5",shape=(len(names),len(names)),fillvalue=1)
+        dset = f.create_dataset("dataset",shape=(len(names),len(names)),fillvalue=1)
     return dset
+
+def get_matrix(matrixpath):
+    f = h5py.File(matrixpath,"r")
+    dataset = f["dataset"]
+
+    return dataset
 
 
 ##
