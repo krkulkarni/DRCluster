@@ -1,26 +1,16 @@
 __author__ = 'kulkarnik'
-from lib import approximate_mds
+
 from sklearn import manifold
-import numpy as np
 
-##perform the MDS on HDF5 matrix
-def cmds(matrix,dim,coordsfile):
-    if (dim==2):
-        ## MDS with 2 dimensions (default)
-        (newmat,eig) = approximate_mds.cmds_tzeng(matrix,dim=2)
+## Perform the MDS on HDF5 matrix
+## n_components = final number of dimensions
+## n_jobs = number of cores to use in calculation (-1 means use all cores)
 
-        np.save(coordsfile,newmat)
-        return newmat
-    elif (dim==3):
-        ## MDS with 3 dimensions
-        (newmat,eig) = approximate_mds.cmds_tzeng(matrix,dim=3)
-        ## call plotter with 3D graph
-        return newmat
-
-def metric_mds(mat,dim,coordsfile):
+def metric_mds(mat,dim):
+    print "Preprocessing the data using MDS..."
     mds = manifold.MDS(n_components=dim, metric=True,
                            max_iter=300,dissimilarity="precomputed",
-                           n_jobs=-1,n_init=1,random_state=1)
+                           n_jobs=1,n_init=1,random_state=1)
     coords = mds.fit(mat).embedding_
 
     return coords

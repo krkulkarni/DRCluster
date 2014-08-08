@@ -78,7 +78,6 @@ def next_line_original_format(flag, parser, handle,namelist,hdfmatrix):
 
 
 ##add scaled score to distance matrix
-
 def add_to_bit_matrix(query,qLen,match,bits,sLen,names,hdfmat):
 
     ##look up query index and match index
@@ -112,7 +111,7 @@ def add_to_e_matrix(query,match,e,names,hdfmat):
 
     #print query ,match, e_scaled_score
 
-    ##Only add scaled score to matrix if it is less than default and any other comparison
+    ##Only add scaled score to matrix if current entry at position is default value
     if hdfmat[query_index,match_index] >= 1:
         hdfmat[query_index,match_index] = e_scaled_score
         hdfmat[match_index,query_index] = e_scaled_score
