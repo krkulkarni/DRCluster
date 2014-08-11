@@ -1,7 +1,9 @@
 __author__ = 'kulkarnik'
 from Tkinter import *
-from lib import annotation
+import matplotlib
+matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
+from lib import annotation
 
 from mpl_toolkits.mplot3d import Axes3D
 import time, sys
@@ -17,8 +19,9 @@ def pyplotter2d(finalmat,colors,names):
     if (colors == []):
         colors = 'b'
 
-    ## Create annotation window with embedded matplotlib
-    root = annotation.tk_window_init(x_points,y_points,names,colors)
+    root,ax1,toolbar,listbox = annotation.tk_window_init(x_points,y_points,names,colors)
+
+    a = annotation.Annotate(ax1,toolbar,listbox,x_points,y_points,names)
 
     # Run Tkinter window
     root.mainloop()

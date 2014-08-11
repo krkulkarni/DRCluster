@@ -26,17 +26,27 @@ class Annotate(object):
         self.isPressed = False
         self.scatter.add_patch(self.rect)
 
-        self.scatter.figure.canvas.mpl_connect('button_press_event', self.on_press)
-        self.scatter.figure.canvas.mpl_connect('button_release_event', self.on_release)
-        self.scatter.figure.canvas.mpl_connect('motion_notify_event', self.on_motion)
-        self.scatter.figure.canvas.mpl_connect('pick_event', self.on_pick)
-        self.scatter.figure.canvas.mpl_connect('key_press_event', self.on_key)
+        self.connect()
+
+
 
     def on_press(self, event):
         if self.toolbar._active is None:
             self.isPressed = True
             self.x0 = event.xdata
             self.y0 = event.ydata
+
+    def on_motion(self,event):
+        if self.isPressed:
+            self.x1 = event.xdata
+            self.y1 = event.ydata
+            try:
+                self.rect.set_width(self.x1 - self.x0)
+                self.rect.set_height(self.y1 - self.y0)
+            except TypeError:
+                pass
+            self.rect.set_xy((self.x0, self.y0))
+            self.scatter.figure.canvas.draw()
 
     def on_release(self, event):
 
@@ -78,18 +88,6 @@ class Annotate(object):
                             self.listbox.insert(END,self.names[i])
 
 
-    def on_motion(self,event):
-        if self.isPressed:
-            self.x1 = event.xdata
-            self.y1 = event.ydata
-            try:
-                self.rect.set_width(self.x1 - self.x0)
-                self.rect.set_height(self.y1 - self.y0)
-            except TypeError:
-                pass
-            self.rect.set_xy((self.x0, self.y0))
-            self.scatter.figure.canvas.draw()
-
     def on_key(self,event):
         if event.key == 'escape':
             self.selectedpoints = []
@@ -97,6 +95,14 @@ class Annotate(object):
 
         if event.key == 'r':
             print "Showing all selected points"
+
+    def connect(self):
+        self.scatter.figure.canvas.mpl_connect('button_press_event', self.on_press)
+        self.scatter.figure.canvas.mpl_connect('button_release_event', self.on_release)
+        self.scatter.figure.canvas.mpl_connect('motion_notify_event', self.on_motion)
+        self.scatter.figure.canvas.mpl_connect('pick_event', self.on_pick)
+        self.scatter.figure.canvas.mpl_connect('key_press_event', self.on_key)
+
 
 
 def tk_window_init(x_points,y_points,names,colors):
@@ -146,12 +152,8 @@ def tk_window_init(x_points,y_points,names,colors):
     listbox.pack(side=LEFT,fill=BOTH,expand=1,pady=6,padx=3)
     sb.pack(side=LEFT,fill=Y,pady=6,padx=3)
 
-    # Create the point selection and annotation capabilities
-    # (More to come soon)
-    a = Annotate(ax1,toolbar,listbox,x_points,y_points,names)
-
     # Create quit button
     quitbutton = Button(master=bottomframe, text='Quit', command=_quit)
     quitbutton.pack(side=LEFT)
 
-    return root
+    return root,ax1,toolbar,listbox
