@@ -99,7 +99,8 @@ class Annotate(object):
             print "Showing all selected points"
 
 
-def tk_window_init(x_points,y_points,colors,names):
+def tk_window_init(x_points,y_points,names,colors):
+
     ## Create Tk main window and assign title and size
     root = Tk()
     root.wm_title("Clustering analysis results")

@@ -1,5 +1,5 @@
 __author__ = 'kulkarnik'
-import argparse
+import argparse, os,sys
 
 def arg_parser():
     paraParser = argparse.ArgumentParser(description='Clustering analysis of BLAST output using MDS algorithm')
@@ -16,9 +16,11 @@ def arg_parser():
     ## 1. temp/mds.hdf5
     ## 2. temp/coords.npy
     ## 3. temp/inity.npy (random generation of points for t-SNE clustering)
+    curr = os.getcwd()
+
     paraParser.add_argument('-dir', '--directory',
                             help="Name of directory with all required info",
-                            required=True)
+                            default=curr)
 
     ## This argument chooses between the bit score and e-value
     ## as the value to generate the distance matrix
@@ -41,7 +43,7 @@ def arg_parser():
     ## mdsonly = run final clustering on pairwise dissimilarity matrix with MDS
     paraParser.add_argument('-type','--type',
                             help="Choose clustering algorithm",
-                            choices=['snepca','snemds','mdsonly','sneonly'],required=True)
+                            choices=['snepca','snemds','mdsonly','sneonly'],default='snemds')
 
     ## This argument chooses the format of the BLAST results file
     ## For most results.out files, you should choose original format
@@ -52,17 +54,22 @@ def arg_parser():
     ## Choose this argument if BLAST results are preparsed and HDF5 dissimilarity matrix has already been populated
     paraParser.add_argument('-pp', '--preparsed',
                             help="HDF-formatted distance matrix is already made",
-                            action="store_true", required=False)
+                            action="store_true")
 
     ## Choose this argument if clustering algorithm has already been run and coords.npy file is stored
     paraParser.add_argument('-pc', '--precoordinated',
                             help="MDS Calculation is already done",
-                            action="store_true", required=False)
+                            action="store_true")
 
     ## Choose this argument to plot the coordinates in a PyPlot with matplotlib
     paraParser.add_argument('-plot','--plot',
                             help="Plot coordinates with matplotlib",
-                            action="store_true", required=False)
+                            action="store_true")
+
+    ## Choose this argument to create a new random initialization of points in t-SNE
+    paraParser.add_argument('-reinit','--reinitialize',
+                            help="Create new random initialization of points",
+                            action="store_true")
 
     args = paraParser.parse_args()
 

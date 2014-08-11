@@ -2,37 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="702cf7ce-4318-47b1-b8d1-0ed7e4419270" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lib/pure_plotter.py" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/curr/Ub_100pF.ff" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/curr/results.out" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/curr/temp/inity.npy" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/curr/temp/mds.hdf5" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/jul_17_names/coords.npy" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/jul_17_names/mds.hdf5" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/jul_17_names/new.phr" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/jul_17_names/new.pin" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/jul_17_names/new.psq" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/jul_17_names/new.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/approximate_mds.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/distance_transform.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/nystrom.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/plotter.py" afterPath="" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/tsne_calc.py" afterPath="$PROJECT_DIR$/lib/tsne_calc.py" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/tsne_calc_c.py" afterPath="$PROJECT_DIR$/lib/tsne_calc_c.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lib/annotation.py" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/tkinter.py" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/jul_17_names/temp/coords.npy" afterPath="$PROJECT_DIR$/jul_17_names/temp/coords.npy" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/newfas/temp/coords.npy" afterPath="$PROJECT_DIR$/newfas/temp/coords.npy" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/jul_17_names/temp/inity.npy" afterPath="$PROJECT_DIR$/jul_17_names/temp/inity.npy" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/newfas/temp/inity.npy" afterPath="$PROJECT_DIR$/newfas/temp/inity.npy" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/families/temp/mds.hdf5" afterPath="$PROJECT_DIR$/families/temp/mds.hdf5" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/jul_17_names/temp/mds.hdf5" afterPath="$PROJECT_DIR$/jul_17_names/temp/mds.hdf5" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/newfas/temp/mds.hdf5" afterPath="$PROJECT_DIR$/newfas/temp/mds.hdf5" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/initrun.py" afterPath="$PROJECT_DIR$/lib/initrun.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/mds_calc.py" afterPath="$PROJECT_DIR$/lib/mds_calc.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/curr/names_all" afterPath="$PROJECT_DIR$/curr/names_all" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/plotter.py" afterPath="$PROJECT_DIR$/lib/plotter.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/python_cluster.py" afterPath="$PROJECT_DIR$/python_cluster.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/readargs.py" afterPath="$PROJECT_DIR$/lib/readargs.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/results_parser.py" afterPath="$PROJECT_DIR$/lib/results_parser.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/curr/ub.ff" afterPath="$PROJECT_DIR$/curr/ub.ff" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="BLAST+.iws" />
@@ -56,25 +35,37 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="python_cluster.py" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="python_cluster.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/python_cluster.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-2.5825894" vertical-offset="1682" max-vertical-offset="2130">
-              <caret line="35" column="4" selection-start-line="35" selection-start-column="4" selection-end-line="35" selection-end-column="4" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2190">
+              <caret line="41" column="16" selection-start-line="41" selection-start-column="16" selection-end-line="41" selection-end-column="16" />
               <folding>
-                <element signature="e#0#16#0" expanded="true" />
+                <element signature="e#0#20#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="plotter.py" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="plotter.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/lib/plotter.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2805">
-              <caret line="76" column="68" selection-start-line="76" selection-start-column="68" selection-end-line="76" selection-end-column="68" />
+            <state vertical-scroll-proportion="0.43080357" vertical-offset="182" max-vertical-offset="675">
+              <caret line="25" column="0" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
               <folding>
                 <element signature="e#25#46#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="annotation.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/lib/annotation.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="1365" max-vertical-offset="2445">
+              <caret line="101" column="49" selection-start-line="101" selection-start-column="49" selection-end-line="101" selection-end-column="49" />
+              <folding>
+                <element signature="e#26#47#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -83,8 +74,8 @@
       <file leaf-file-name="readargs.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/lib/readargs.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="495" max-vertical-offset="1125">
-              <caret line="49" column="66" selection-start-line="49" selection-start-column="66" selection-end-line="49" selection-end-column="66" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="527" max-vertical-offset="1230">
+              <caret line="68" column="84" selection-start-line="68" selection-start-column="84" selection-end-line="68" selection-end-column="84" />
               <folding />
             </state>
           </provider>
@@ -128,13 +119,15 @@
         <option value="$PROJECT_DIR$/lib/results_parser.py" />
         <option value="$PROJECT_DIR$/lib/tsne_calc.py" />
         <option value="$PROJECT_DIR$/animation.py" />
-        <option value="$PROJECT_DIR$/lib/tkinter.py" />
         <option value="$PROJECT_DIR$/lib/new_plotter.py" />
         <option value="$PROJECT_DIR$/lib/mds_calc.py" />
         <option value="$PROJECT_DIR$/lib/initrun.py" />
+        <option value="$PROJECT_DIR$/hanoi.py" />
         <option value="$PROJECT_DIR$/lib/readargs.py" />
-        <option value="$PROJECT_DIR$/lib/plotter.py" />
         <option value="$PROJECT_DIR$/python_cluster.py" />
+        <option value="$PROJECT_DIR$/lib/tkinter.py" />
+        <option value="$PROJECT_DIR$/lib/annotation.py" />
+        <option value="$PROJECT_DIR$/lib/plotter.py" />
       </list>
     </option>
   </component>
@@ -170,25 +163,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="Scope">
-        <subPane subId="Problems" />
-        <subPane subId="Project Files">
-          <PATH>
-            <PATH_ELEMENT USER_OBJECT="Root">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-        <subPane subId="Changed Files">
-          <PATH>
-            <PATH_ELEMENT USER_OBJECT="Root">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -223,6 +197,25 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scope">
+        <subPane subId="Problems" />
+        <subPane subId="Project Files">
+          <PATH>
+            <PATH_ELEMENT USER_OBJECT="Root">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+        <subPane subId="Changed Files">
+          <PATH>
+            <PATH_ELEMENT USER_OBJECT="Root">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -251,26 +244,6 @@
     </key>
   </component>
   <component name="RunManager" selected="Python.python_cluster">
-    <configuration default="false" name="r_cluster" type="PythonConfigurationType" factoryName="Python" editBeforeRun="true" temporary="true">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="BLAST+" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/r_cluster.py" />
-      <option name="PARAMETERS" value="-e -2d -nmmds" />
-      <RunnerSettings RunnerId="PyDebugRunner" />
-      <RunnerSettings RunnerId="PythonRunner" />
-      <ConfigurationWrapper RunnerId="PyDebugRunner" />
-      <ConfigurationWrapper RunnerId="PythonRunner" />
-      <method />
-    </configuration>
     <configuration default="false" name="python_cluster" type="PythonConfigurationType" factoryName="Python" editBeforeRun="true" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -284,7 +257,7 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="BLAST+" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/python_cluster.py" />
-      <option name="PARAMETERS" value="-val b -dim 2 -type snemds -fmat mod -dir jul_17_names -plot" />
+      <option name="PARAMETERS" value="-dir newfas -fmat mod -dim 3 -plot -pp -pc" />
       <RunnerSettings RunnerId="PyDebugRunner" />
       <RunnerSettings RunnerId="PythonRunner" />
       <ConfigurationWrapper RunnerId="PyDebugRunner" />
@@ -339,7 +312,25 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="BLAST+" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/lib/tkinter.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/lib/annotation.py" />
+      <option name="PARAMETERS" value="" />
+      <RunnerSettings RunnerId="PythonRunner" />
+      <ConfigurationWrapper RunnerId="PythonRunner" />
+      <method />
+    </configuration>
+    <configuration default="false" name="hanoi" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="BLAST+" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/hanoi.py" />
       <option name="PARAMETERS" value="" />
       <RunnerSettings RunnerId="PythonRunner" />
       <ConfigurationWrapper RunnerId="PythonRunner" />
@@ -486,19 +477,19 @@
     </configuration>
     <list size="6">
       <item index="0" class="java.lang.String" itemvalue="Python.Nystrom" />
-      <item index="1" class="java.lang.String" itemvalue="Python.r_cluster" />
-      <item index="2" class="java.lang.String" itemvalue="Python.python_cluster" />
-      <item index="3" class="java.lang.String" itemvalue="Python.downloaded_tsne" />
-      <item index="4" class="java.lang.String" itemvalue="Python.animation" />
-      <item index="5" class="java.lang.String" itemvalue="Python.tkinter" />
+      <item index="1" class="java.lang.String" itemvalue="Python.python_cluster" />
+      <item index="2" class="java.lang.String" itemvalue="Python.downloaded_tsne" />
+      <item index="3" class="java.lang.String" itemvalue="Python.animation" />
+      <item index="4" class="java.lang.String" itemvalue="Python.tkinter" />
+      <item index="5" class="java.lang.String" itemvalue="Python.hanoi" />
     </list>
     <recent_temporary>
       <list size="5">
         <item index="0" class="java.lang.String" itemvalue="Python.python_cluster" />
-        <item index="1" class="java.lang.String" itemvalue="Python.tkinter" />
-        <item index="2" class="java.lang.String" itemvalue="Python.animation" />
-        <item index="3" class="java.lang.String" itemvalue="Python.downloaded_tsne" />
-        <item index="4" class="java.lang.String" itemvalue="Python.r_cluster" />
+        <item index="1" class="java.lang.String" itemvalue="Python.hanoi" />
+        <item index="2" class="java.lang.String" itemvalue="Python.tkinter" />
+        <item index="3" class="java.lang.String" itemvalue="Python.animation" />
+        <item index="4" class="java.lang.String" itemvalue="Python.downloaded_tsne" />
       </list>
     </recent_temporary>
   </component>
@@ -530,11 +521,11 @@
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3299566" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32954547" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32954547" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="Vcs.Log.UiProperties">
@@ -559,13 +550,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file:///usr/local/Cellar/python/2.7.7_1/Frameworks/Python.framework/Versions/2.7/lib/python2.7/random.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.33333334" vertical-offset="4625" max-vertical-offset="13590">
-          <caret line="325" column="0" selection-start-line="325" selection-start-column="0" selection-end-line="325" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file:///usr/local/Cellar/python/2.7.7_1/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/rpy2/robjects/functions.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.33333334" vertical-offset="1277" max-vertical-offset="3195">
@@ -682,7 +666,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="93386" max-vertical-offset="141075">
           <caret line="6243" column="0" selection-start-line="6243" selection-start-column="0" selection-end-line="6243" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -690,7 +673,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="6886" max-vertical-offset="29565">
           <caret line="487" column="0" selection-start-line="487" selection-start-column="0" selection-end-line="487" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -698,7 +680,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.33333334" vertical-offset="5846" max-vertical-offset="64800">
           <caret line="410" column="0" selection-start-line="410" selection-start-column="0" selection-end-line="410" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -714,7 +695,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.31392404" vertical-offset="1016" max-vertical-offset="47940">
           <caret line="86" column="0" selection-start-line="86" selection-start-column="0" selection-end-line="86" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -761,14 +741,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lib/tkinter.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="255">
-          <caret line="11" column="14" selection-start-line="7" selection-start-column="0" selection-end-line="11" selection-end-column="14" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/lib/pure_plotter.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="1365" max-vertical-offset="2100">
@@ -781,9 +753,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="1279" max-vertical-offset="2625">
           <caret line="94" column="0" selection-start-line="94" selection-start-column="0" selection-end-line="94" selection-end-column="0" />
-          <folding>
-            <element signature="e#504#524#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -791,7 +760,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="240">
           <caret line="9" column="0" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -799,9 +767,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="2221" max-vertical-offset="56310">
           <caret line="156" column="0" selection-start-line="156" selection-start-column="0" selection-end-line="156" selection-end-column="0" />
-          <folding>
-            <element signature="e#2669#2682#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -809,7 +774,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="1976" max-vertical-offset="12165">
           <caret line="145" column="0" selection-start-line="145" selection-start-column="0" selection-end-line="145" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -817,9 +781,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="17101" max-vertical-offset="19515">
           <caret line="1148" column="0" selection-start-line="1148" selection-start-column="0" selection-end-line="1148" selection-end-column="0" />
-          <folding>
-            <element signature="e#3244#3298#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -827,9 +788,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="945">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#37#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -837,9 +795,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="15045">
           <caret line="2" column="0" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
-          <folding>
-            <element signature="e#35#82#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -847,7 +802,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="116" max-vertical-offset="54765">
           <caret line="16" column="0" selection-start-line="16" selection-start-column="0" selection-end-line="16" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -855,9 +809,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="116" max-vertical-offset="42855">
           <caret line="16" column="0" selection-start-line="16" selection-start-column="0" selection-end-line="16" selection-end-column="0" />
-          <folding>
-            <element signature="e#610#620#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -865,7 +816,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="165">
           <caret line="1" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -873,7 +823,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="372">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -881,7 +830,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="2426" max-vertical-offset="11250">
           <caret line="173" column="0" selection-start-line="173" selection-start-column="0" selection-end-line="173" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -897,7 +845,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="2989" max-vertical-offset="5295">
           <caret line="213" column="0" selection-start-line="213" selection-start-column="0" selection-end-line="213" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -905,7 +852,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="2108" max-vertical-offset="9735">
           <caret line="158" column="0" selection-start-line="158" selection-start-column="0" selection-end-line="158" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -913,7 +859,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.33164558" vertical-offset="5359" max-vertical-offset="5895">
           <caret line="375" column="0" selection-start-line="375" selection-start-column="0" selection-end-line="375" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -921,15 +866,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="450">
           <caret line="13" column="36" selection-start-line="13" selection-start-column="36" selection-end-line="13" selection-end-column="36" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/readargs.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="495" max-vertical-offset="1125">
-          <caret line="49" column="66" selection-start-line="49" selection-start-column="66" selection-end-line="49" selection-end-column="66" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -937,28 +873,53 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.4017857" vertical-offset="540" max-vertical-offset="1020">
           <caret line="48" column="0" selection-start-line="48" selection-start-column="0" selection-end-line="48" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hanoi.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="5.122768" vertical-offset="0" max-vertical-offset="2385">
+          <caret line="153" column="19" selection-start-line="153" selection-start-column="19" selection-end-line="153" selection-end-column="19" />
           <folding>
-            <element signature="e#25#36#0" expanded="true" />
+            <element signature="e#1292#1313#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/readargs.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="527" max-vertical-offset="1230">
+          <caret line="68" column="84" selection-start-line="68" selection-start-column="84" selection-end-line="68" selection-end-column="84" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python_cluster.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2190">
+          <caret line="41" column="16" selection-start-line="41" selection-start-column="16" selection-end-line="41" selection-end-column="16" />
+          <folding>
+            <element signature="e#0#20#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/annotation.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="1500" max-vertical-offset="2430">
+          <caret line="101" column="49" selection-start-line="101" selection-start-column="49" selection-end-line="101" selection-end-column="49" />
+          <folding>
+            <element signature="e#26#47#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/lib/plotter.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2805">
-          <caret line="76" column="68" selection-start-line="76" selection-start-column="68" selection-end-line="76" selection-end-column="68" />
+        <state vertical-scroll-proportion="0.43080357" vertical-offset="182" max-vertical-offset="675">
+          <caret line="25" column="0" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
           <folding>
             <element signature="e#25#46#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/python_cluster.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-2.5825894" vertical-offset="1682" max-vertical-offset="2130">
-          <caret line="35" column="4" selection-start-line="35" selection-start-column="4" selection-end-line="35" selection-end-column="4" />
-          <folding>
-            <element signature="e#0#16#0" expanded="true" />
           </folding>
         </state>
       </provider>

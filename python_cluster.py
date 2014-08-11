@@ -1,4 +1,4 @@
-import time, sys
+import time, sys, os
 import numpy as np
 from Tkinter import *
 from lib import readargs, initrun, results_parser, mds_calc, tsne_calc, plotter
@@ -29,13 +29,17 @@ if (__name__ == '__main__'):
 
 
     ## Define the paths of BLAST results file and names file
-    resultsfile = "/Users/kulkarnik/Research/MDSCluster_2014/BLAST+/"+args.directory+"/results.out"
+    resultsfile = args.directory + "/results.out"
+    fastafile = args.directory + "/names_all"
+    matrixpath = args.directory + "/temp/mds.hdf5"
+    coordspath = args.directory + "/temp/coords.npy"
+    inity = args.directory + "/temp/inity.npy"
 
-    fastafile = "/Users/kulkarnik/Research/MDSCluster_2014/BLAST+/"+args.directory+"/names_all"
-    matrixpath = "/Users/kulkarnik/Research/MDSCluster_2014/BLAST+/"+args.directory+"/temp/mds.hdf5"
-    coordspath = "/Users/kulkarnik/Research/MDSCluster_2014/BLAST+/"+args.directory+"/temp/coords.npy"
-    inity = "/Users/kulkarnik/Research/MDSCluster_2014/BLAST+/"+args.directory+"/temp/inity.npy"
-
+    if (args.reinitialize):
+        try:
+            os.remove(inity)
+        except OSError:
+            pass
 
     ## Obtain colors and names from names file
     names,colors = initrun.read_fasta(fastafile,args.format)
