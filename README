@@ -1,4 +1,5 @@
 This program runs an MDS clustering program.
+<<<<<<< HEAD
 
 Required modules:
 
@@ -11,3 +12,5 @@ csv
 sys
 time
 math
+=======
+>>>>>>> b49cf280b90621bc2f254f8cc63ae7e2bb2a0ebf
