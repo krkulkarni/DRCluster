@@ -1,9 +1,8 @@
-import time, sys, os
+import time
+import sys
+import os
 import numpy as np
-from Tkinter import *
 from lib import readargs, initrun, results_parser, mds_calc, tsne_calc, plotter
-
-
 
 __author__ = "kulkarnik"
 
@@ -48,9 +47,12 @@ if (__name__ == '__main__'):
     tabParser, tabHandle = initrun.open_file(resultsfile)
     print "Opened file"
 
+    ## Check if coordinates have already been mapped
     if args.precoordinated == True:
         print "Loading coordinates"
         matrix = np.load(coordspath)
+
+
     else:
         ## Check if results are preparsed
         ##
@@ -71,12 +73,6 @@ if (__name__ == '__main__'):
                 results_parser.next_line_modified_format(args.value,tabParser,tabHandle,names,hdfmat)
             elif (args.format == 'orig'):
                 results_parser.next_line_original_format(args.value,tabParser,tabHandle,names,hdfmat)
-
-
-
-    ## Check if coordinates have already been mapped
-
-
 
         ## Run the appropriate dimensionality reduction algorithm
         ## -mdsonly = metric MDS with sklearn's manifold package

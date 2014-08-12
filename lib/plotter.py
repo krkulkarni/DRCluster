@@ -19,9 +19,11 @@ def pyplotter2d(finalmat,colors,names):
     if (colors == []):
         colors = 'b'
 
+    # Create Tk window and handles to subplot, toolbar and listbox
     root,ax1,toolbar,listbox = annotation.tk_window_init(x_points,y_points,names,colors)
 
-    a = annotation.Annotate(ax1,toolbar,listbox,x_points,y_points,names)
+    # Create capability to select points
+    a = annotation.Annotate(ax1,toolbar,listbox,x_points,y_points,names,colors)
 
     # Run Tkinter window
     root.mainloop()

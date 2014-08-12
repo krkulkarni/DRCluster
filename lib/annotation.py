@@ -9,7 +9,7 @@ from matplotlib.patches import Rectangle
 import numpy as np
 
 class Annotate(object):
-    def __init__(self,scatterplot,toolbar,listbox,x_points,y_points,names):
+    def __init__(self,scatterplot,toolbar,listbox,x_points,y_points,names,colors):
         self.x_points = x_points
         self.y_points = y_points
         self.names = names
@@ -17,14 +17,16 @@ class Annotate(object):
         self.scatter = scatterplot
         self.toolbar = toolbar
         self.listbox = listbox
+        self.colors = colors
+
 
         self.rect = Rectangle((0,0), 0, 0,facecolor='grey', alpha=0.3)
+        self.scatter.add_patch(self.rect)
         self.x0 = 0
         self.y0 = 0
         self.x1 = 0
         self.y1 = 0
         self.isPressed = False
-        self.scatter.add_patch(self.rect)
 
         self.connect()
 
@@ -69,7 +71,10 @@ class Annotate(object):
         self.rect.set_width(0)
         self.rect.set_height(0)
         self.rect.set_xy((self.x0, self.y0))
-        self.scatter.figure.canvas.draw()
+        try:
+            self.scatter.figure.canvas.draw()
+        except TypeError:
+            pass
 
 
     def on_pick(self, mouseevent):
@@ -96,12 +101,35 @@ class Annotate(object):
         if event.key == 'r':
             print "Showing all selected points"
 
+        if event.key == 'c':
+            self.scatter.clear()
+            new_x = []
+            new_y = []
+            new_colors = []
+            for (i, name) in enumerate(self.names):
+                if name in self.selectedpoints:
+                    new_x.append(self.x_points[i])
+                    new_y.append(self.y_points[i])
+                    new_colors.append(self.colors[i])
+
+            self.scatter.scatter(new_x, new_y,c=new_colors,picker=2)
+            self.scatter.add_patch(self.rect)
+            self.scatter.figure.canvas.draw()
+
+        if event.key == 'a':
+            self.scatter.clear()
+            self.scatter.scatter(self.x_points,self.y_points,c=self.colors,picker=2)
+            self.scatter.add_patch(self.rect)
+            self.scatter.figure.canvas.draw()
+
     def connect(self):
         self.scatter.figure.canvas.mpl_connect('button_press_event', self.on_press)
         self.scatter.figure.canvas.mpl_connect('button_release_event', self.on_release)
         self.scatter.figure.canvas.mpl_connect('motion_notify_event', self.on_motion)
         self.scatter.figure.canvas.mpl_connect('pick_event', self.on_pick)
         self.scatter.figure.canvas.mpl_connect('key_press_event', self.on_key)
+        self.scatter.figure.canvas.mpl_connect('button_press_event',
+                                               lambda event:self.scatter.figure.canvas._tkcanvas.focus_set())
 
 
 
