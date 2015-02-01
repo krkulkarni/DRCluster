@@ -49,8 +49,8 @@ def next_line_original_format(flag, parser, handle,namelist,hdfmatrix):
         try:
             while (True):
                 line = next(parser)
-                qSeqId = line[0].split(",")[0]
-                sSeqId = line[1].split(",")[0]
+                qSeqId = line[0].split(";")[0]
+                sSeqId = line[1].split(";")[0]
                 qLen = int(line[7].strip())
                 sLen = int(line[9].strip())
                 bitScore = float(line[11].strip())
@@ -64,8 +64,8 @@ def next_line_original_format(flag, parser, handle,namelist,hdfmatrix):
         try:
             while (True):
                 line = next(parser)
-                qSeqId = line[0].split(",")[0]
-                sSeqId = line[1].split(",")[0]
+                qSeqId = line[0].split(";")[0]
+                sSeqId = line[1].split(";")[0]
                 eValue = float(line[10].strip())
 
                 ##REMEMBER TO ADD FLAG OPTION FOR EITHER EVALUE OR BITSCORE MATRIX

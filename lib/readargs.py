@@ -56,6 +56,9 @@ def arg_parser():
                             help="HDF-formatted distance matrix is already made",
                             action="store_true")
 
+    paraParser.add_argument('-load', '--load',
+                            help="Load coordinates from Numpy coordinate matrix")
+
     ## Choose this argument if clustering algorithm has already been run and coords.npy file is stored
     paraParser.add_argument('-pc', '--precoordinated',
                             help="MDS Calculation is already done",

@@ -2,14 +2,13 @@ import time
 import sys
 import os
 import numpy as np
-from lib import readargs, initrun, results_parser, mds_calc, tsne_calc, plotter
+import json
+from lib import readargs, initrun, results_parser, mds_calc, tsne_calc, jsonconv, plotter
 
 __author__ = "kulkarnik"
 
-
 ##RUN THE CODE
-if (__name__ == '__main__'):
-
+def main():
     ## Get the starting time to measure the time of the run
     print "Running script..."
     t0 = time.clock()
@@ -29,9 +28,10 @@ if (__name__ == '__main__'):
 
     ## Define the paths of BLAST results file and names file
     resultsfile = args.directory + "/results.out"
-    fastafile = args.directory + "/names_all"
+    fastafile = args.directory + "/" + args.directory + ".fas"
     matrixpath = args.directory + "/temp/mds.hdf5"
-    coordspath = args.directory + "/temp/coords.npy"
+    coordspath = args.directory + "/temp/" + args.directory + "_"+ args.type + "_" + "coords.npy"
+    jsonpath = args.directory + "/temp/file.json"
     inity = args.directory + "/temp/inity.npy"
 
     if (args.reinitialize):
@@ -41,15 +41,18 @@ if (__name__ == '__main__'):
             pass
 
     ## Obtain colors and names from names file
-    names,colors = initrun.read_fasta(fastafile,args.format)
+    names,colors,lines,seqs = initrun.read_fasta(fastafile,args.format)
     print "Read FASTA file"
     ## Obtain the handle to the results file
     tabParser, tabHandle = initrun.open_file(resultsfile)
     print "Opened file"
 
     ## Check if coordinates have already been mapped
-    if args.precoordinated == True:
-        print "Loading coordinates"
+    if (args.load):
+        print "Loading coordinates from path"
+        matrix = np.load(args.load)
+    elif (args.precoordinated == True):
+        print "Loading coordinates from temp"
         matrix = np.load(coordspath)
 
 
@@ -89,6 +92,7 @@ if (__name__ == '__main__'):
 
             ## Partially reduce dimensionality of HDF5 matrix to 1/10th of original size or maximum of 400
             tempred = min(int(len(names)/10),400)
+            print "Preprocessing the data using MDS..."
             print "Reducing to", tempred, "dimensions"
 
             tempmatrix = mds_calc.metric_mds(hdfmat,tempred)
@@ -119,16 +123,20 @@ if (__name__ == '__main__'):
     np.save(coordspath,matrix)
     print "Took", time.clock()-t0, "seconds"
 
+    #with open(jsonpath, 'w') as jsonout:
+    #    json.dump(jsonconv.jsonmaker(colors,lines,matrix,args.format), jsonout, indent=2)
 
     ## Plot the results with matplotlib's PyPlot
     if (args.plot):
         print "Plotting",len(names), "points"
-
         if (int(args.dimension) == 2):
-            plotter.pyplotter2d(matrix,colors,names)
+            plotter.pyplotter2d(matrix,colors,names,seqs,args.directory)
 
         elif (int(args.dimension) == 3):
             plotter.pyplotter3d(matrix,colors)
+
+if (__name__ == '__main__'):
+    main()
 
 
 

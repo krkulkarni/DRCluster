@@ -5,23 +5,56 @@ import unittest
 #from Bio.Blast.Applications import NcbiblastpCommandline
 
 ##Read FASTA file names and make a list
-def read_fasta(fastafile,fmat):
+def read_fasta(fastafile,fmat,colorscheme):
+    lines = []
     names = []
+    seqs = []
     colors = []
+    pfamdict = {}
+    colornum = 0
     with open(fastafile) as f:
         for line in f:
+            lines.append(line)
             if (fmat == 'mod'):
                 ## for modified format, namestrings are split at ";" character
-                parts = line.split(";")
+                if (line[0] == '>'):
+                    parts = line[1:].split(";")
+                    names.append(parts[0].strip().split()[0])
+                else:
+                    seqs.append(line.strip())
             elif (fmat == 'orig'):
                 ## for original format, namestrings are split at "," character
-                parts = line.split(",")
-            names.append(parts[0].strip().split()[0])
-            try:
-                colors.append(int(parts[1]))
-            except:
-                pass
-    return names,colors
+                if (line[0] == '>'):
+                    parts = line[1:].split(";")
+                    names.append(parts[0].strip().split()[0])
+                    try:
+                        if colorscheme == 'mod':
+                            color = parts[8].strip()
+                            if color == 'pdb':
+                                color = 'r'
+                            elif color == 'mod':
+                                color = 'g'
+                            elif color == 'notmod':
+                                color ='b'
+                        elif colorscheme == 'pfam':
+                            color, pfamdict, colornum = checkpfam(parts[1].strip(),pfamdict,colornum)
+                    except:
+                        print "Coloring error!"
+
+                    colors.append(color)
+                else:
+                    seqs.append(line.strip())
+
+
+    return names,colors,lines,seqs
+
+def checkpfam(pfamname, pfamdict,colornum):
+    if pfamname in pfamdict.keys():
+        return pfamdict[pfamname], pfamdict, colornum
+    else:
+        colornum += 1
+        pfamdict[pfamname] = colornum
+        return colornum, pfamdict, colornum
 
 ##Creates handle for results.out file
 def open_file(filename):

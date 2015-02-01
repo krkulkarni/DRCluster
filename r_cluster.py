@@ -27,8 +27,8 @@ rhdf5 = importr("rhdf5")
 
 __author__ = "kulkarnik"
 
-resultsfile = "/Users/kulkarnik/Research/MDSCluster_2014/BLAST+/newfas/results.out"
-fastafile = "/Users/kulkarnik/Research/MDSCluster_2014/BLAST+/newfas/names_mainfam"
+resultsfile = "/Users/kulkarnik/Research/MDSCluster_2014/BLAST+/mainfam/results.out"
+fastafile = "/Users/kulkarnik/Research/MDSCluster_2014/BLAST+/mainfam/names_mainfam"
 
 queryname = "~/BLAST+/uniprot/uniprot.fas"
 dbname = "~/BLAST+/uniprot/uniprot"

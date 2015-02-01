@@ -7,7 +7,6 @@ from sklearn import manifold
 ## n_jobs = number of cores to use in calculation (-1 means use all cores)
 
 def metric_mds(mat,dim):
-    print "Preprocessing the data using MDS..."
     mds = manifold.MDS(n_components=dim, metric=True,
                            max_iter=300,dissimilarity="precomputed",
                            n_jobs=1,n_init=1,random_state=1)
