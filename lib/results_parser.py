@@ -12,7 +12,7 @@ import math
 ## bitScore --> bit score of match
 ##
 
-def next_line_modified_format(flag, parser, handle,namelist,hdfmatrix):
+def next_line_modified_format(flag, parser, handle,points,hdfmatrix):
     ##if the bit flag is on, run addtoBitMatrix
     if (flag == 'b'):
         try:
@@ -23,7 +23,7 @@ def next_line_modified_format(flag, parser, handle,namelist,hdfmatrix):
                 sSeqId = line[2].split(";")[0]
                 sLen = int(line[3].strip())
                 bitScore = float(line[5].strip())
-                add_to_bit_matrix(qSeqId,qLen,sSeqId,bitScore,sLen,namelist,hdfmatrix)
+                add_to_bit_matrix(qSeqId,qLen,sSeqId,bitScore,sLen,points,hdfmatrix)
 
         except StopIteration:
             handle.close()
@@ -38,12 +38,12 @@ def next_line_modified_format(flag, parser, handle,namelist,hdfmatrix):
                 eValue = float(line[4].strip())
 
                 ##REMEMBER TO ADD FLAG OPTION FOR EITHER EVALUE OR BITSCORE MATRIX
-                add_to_e_matrix(qSeqId,sSeqId,eValue,namelist,hdfmatrix)
+                add_to_e_matrix(qSeqId,sSeqId,eValue,points,hdfmatrix)
 
         except StopIteration:
             handle.close()
 
-def next_line_original_format(flag, parser, handle,namelist,hdfmatrix):
+def next_line_original_format(flag, parser, handle,points,hdfmatrix):
     ##if the bit flag is on, run addtoBitMatrix
     if (flag == 'b'):
         try:
@@ -54,7 +54,7 @@ def next_line_original_format(flag, parser, handle,namelist,hdfmatrix):
                 qLen = int(line[7].strip())
                 sLen = int(line[9].strip())
                 bitScore = float(line[11].strip())
-                add_to_bit_matrix(qSeqId,qLen,sSeqId,bitScore,sLen,namelist,hdfmatrix)
+                add_to_bit_matrix(qSeqId,qLen,sSeqId,bitScore,sLen,points,hdfmatrix)
 
         except StopIteration:
             handle.close()
@@ -69,7 +69,7 @@ def next_line_original_format(flag, parser, handle,namelist,hdfmatrix):
                 eValue = float(line[10].strip())
 
                 ##REMEMBER TO ADD FLAG OPTION FOR EITHER EVALUE OR BITSCORE MATRIX
-                add_to_e_matrix(qSeqId,sSeqId,eValue,namelist,hdfmatrix)
+                add_to_e_matrix(qSeqId,sSeqId,eValue,points,hdfmatrix)
 
         except StopIteration:
             handle.close()
@@ -78,11 +78,14 @@ def next_line_original_format(flag, parser, handle,namelist,hdfmatrix):
 
 
 ##add scaled score to distance matrix
-def add_to_bit_matrix(query,qLen,match,bits,sLen,names,hdfmat):
+def add_to_bit_matrix(query,qLen,match,bits,sLen,points,hdfmat):
 
     ##look up query index and match index
-    query_index = names.index(query)
-    match_index = names.index(match)
+    for i, item in enumerate(points):
+        if item.name == query:
+            query_index = i
+        if item.name == match:
+            match_index = i
 
     ##convert bit score into a scaled score
     bit_scaled_score = convert_bit_score(bits,qLen,sLen)
@@ -101,10 +104,17 @@ def convert_bit_score(bitscore,querylength,matchlength):
     return abs(value)
 
 ##WORK ON THE SCALED SCORE FOR E VALUES
-def add_to_e_matrix(query,match,e,names,hdfmat):
+def add_to_e_matrix(query,match,e,points,hdfmat):
     ##look up query index and match index
-    query_index = names.index(query)
-    match_index = names.index(match)
+
+    for i, item in enumerate(points):
+        if item.name == query:
+            query_index = i
+        if item.name == match:
+            match_index = i
+
+    # query_index = names.index(query)
+    # match_index = names.index(match)
 
     ##convert bit score into a scaled score
     e_scaled_score = convert_e_score(e)

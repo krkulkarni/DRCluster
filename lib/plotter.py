@@ -9,7 +9,7 @@ from mpl_toolkits.mplot3d import Axes3D
 import time, sys
 
 
-def pyplotter2d(finalmat,colors,names,seqs,dir):
+def pyplotter2d(finalmat,colors,dir,points,sizes):
     # Extract x and y coordinates from finalmat
     x_points = finalmat[:,0]
     y_points = finalmat[:,1]
@@ -19,10 +19,10 @@ def pyplotter2d(finalmat,colors,names,seqs,dir):
         colors = 'b'
 
     # Create Tk window and handles to subplot, toolbar and listbox
-    root,ax1,toolbar,listbox = annotation.tk_window_init(x_points,y_points,names,colors,seqs)
+    root,ax1,toolbar,listbox,infobox = annotation.tk_window_init(x_points,y_points)
 
     # Create capability to select points
-    a = annotation.Annotate(ax1,toolbar,listbox,x_points,y_points,names,colors,seqs,dir)
+    a = annotation.Annotate(ax1,toolbar,listbox,infobox,x_points,y_points,colors,dir,points,sizes)
 
     # Run Tkinter window
     root.mainloop()

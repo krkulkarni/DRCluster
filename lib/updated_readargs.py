@@ -46,15 +46,8 @@ def arg_parser():
                             choices=['snepca','snemds','mdsonly','sneonly'],default='snemds')
 
     paraParser.add_argument('-color','--color',
-                            help="Choose coloring scheme: modelability, or PFAM",
-                            choices=['pfam', 'mod'],default='mod')
-
-
-    ## This argument chooses the format of the BLAST results file
-    ## For most results.out files, you should choose original format
-    paraParser.add_argument('-fmat','--format',
-                            help="In what format is BLAST output?",
-                            choices=['orig','mod'], default='orig')
+                            help="Choose coloring scheme: modelability, PFAM, or group",
+                            choices=['pfam', 'mod', 'group'],default='mod')
 
     ## Choose this argument if BLAST results are preparsed and HDF5 dissimilarity matrix has already been populated
     paraParser.add_argument('-parse', '--parse',
@@ -68,6 +61,10 @@ def arg_parser():
     paraParser.add_argument('-cluster', '--cluster',
                             help="Perform MDS Calculation",
                             action="store_true")
+
+    paraParser.add_argument('-group', '--group',
+                            type=float,
+                            help="Group into modeling families")
 
     ## Choose this argument to plot the coordinates in a PyPlot with matplotlib
     paraParser.add_argument('-plot','--plot',
