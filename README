@@ -2,7 +2,7 @@ Required modules:
 
 lib package
 argparse
-h5py (with HDF5)
+h5py (with HDF5 1.8.14 required)
 sklearn (with numpy, scipy)
 matplotlib (with mpl_toolkits)
 csv
