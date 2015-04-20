@@ -137,6 +137,7 @@ def main():
         print "Some error occurred"
         sys.exit(1)
 
+    print len(matrix), "points in dataset"
     print "Took", time.clock()-t0, "seconds"
 
     #with open(jsonpath, 'w') as jsonout:
@@ -147,7 +148,7 @@ def main():
         print "Plotting",len(matrix), "points"
         ## load sizes manually!!!
         if (args.directory.split('/')[-1] == "total_ub" or args.directory.split('/')[-1] == "full_ub"):
-            point_sizes = np.loadtxt("allsizes.txt")
+            point_sizes = np.loadtxt(args.directory + "/allsizes.txt")
         else:
             point_sizes = 20
         if (int(args.dimension) == 2):
