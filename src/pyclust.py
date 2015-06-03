@@ -5,6 +5,7 @@ import sys
 import os
 import numpy as np
 from lib import updated_readargs, initrun, results_parser, mds_calc, tsne_calc, grouper, plotter
+import tsne
 #import json
 #from lib import jsonconv
 
@@ -81,7 +82,8 @@ def main():
             print "Reducing to", tempred, "dimensions"
 
             tempmatrix = mds_calc.svd(hdfmat,tempred)
-            matrix = tsne_calc.tsne(inity,False,tempmatrix,no_dims=int(args.dimension),initial_dims=tempred)
+            matrix = tsne.bh_sne(tempmatrix)
+            # matrix = tsne_calc.tsne(inity,False,tempmatrix,no_dims=int(args.dimension),initial_dims=tempred)
 
         elif (args.type == "snepca"):
             print "Performing t-SNE with PCA preprocessing"

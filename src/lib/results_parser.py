@@ -87,28 +87,26 @@ def add_to_e_matrix(query,match,e,points,hdfmat):
     #print query ,match, e_scaled_score
 
     ##Only add scaled score to matrix if current entry at position is default value
-    if hdfmat[query_index,match_index] >= 1:
+    if hdfmat[query_index,match_index] <= 0:
         hdfmat[query_index,match_index] = e_scaled_score
         hdfmat[match_index,query_index] = e_scaled_score
 
 def convert_e_score(evalue):
-    if (evalue != 0):
-        value = -math.log(evalue)
-    else:
-        value = 400
 
-    if (value <= 1):
-        value = 1
-
-    value = (1/value)**0.3
-
-
-
-    # evalue = evalue*1000
-    # if (evalue < 0.000001):
-    #     value = 0
-    # elif (evalue > 10):
-    #     value = 1
+    try:
+        if (evalue>1):
+            return 0
+        return -math.log(evalue)
+        
+    except ValueError:
+        return 250
+    # if (evalue != 0):
+    #     value = -math.log(evalue)
     # else:
-    #     value = evalue/10
-    return value
+    #     value = 400
+    #
+    # if (value <= 1):
+    #     value = 1
+    #
+    # value = (1/value)**0.3
+

@@ -75,7 +75,7 @@ def create_matrix(flag,points,matrixpath):
     if (flag == 'b'):
         dset = f.create_dataset("dataset",shape=(len(points),len(points)),fillvalue=4)
     elif (flag == 'e'):
-        dset = f.create_dataset("dataset",shape=(len(points),len(points)),fillvalue=1)
+        dset = f.create_dataset("dataset",shape=(len(points),len(points)),fillvalue=0)
     return dset, f
 
 def get_matrix(matrixpath):
