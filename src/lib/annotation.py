@@ -43,17 +43,28 @@ class Annotate(object):
     def onselect(self, event):
     # Note here that Tkinter passes an event object to onselect()
         w = event.widget
-        index = (w.curselection()[0])
-        name = w.get(index)
-        for i, point in enumerate(self.points):
-            if name == point.name:
-                self.infobox.delete(0,END)
-                self.infobox.insert(END,"NAME: " + point.name)
-                self.infobox.insert(END,"PFAM: " + str(point.pfam.split(".")[0]))
-                self.infobox.insert(END,"MOD: " + point.mod)
-                self.infobox.insert(END,"NUM IN CLUSTER: " + str(int(self.sizes[i])))
-                break
-
+        try:
+            index = (w.curselection()[0])
+            name = w.get(index)
+            point = self.points[name]
+            self.infobox.delete(0,END)
+            self.infobox.insert(END,"NAME: " + point.name)
+            self.infobox.insert(END,"PFAM: " + str(point.pfam.split(".")[0]))
+            self.infobox.insert(END,"MOD: " + point.mod)
+            try:
+                self.infobox.insert(END,"NUM IN CLUSTER: " + str(self.sizes[point.index]))
+            except TypeError:
+                pass
+            # for i, point in enumerate(self.points):
+            #     if name == point.name:
+            #         self.infobox.delete(0,END)
+            #         self.infobox.insert(END,"NAME: " + point.name)
+            #         self.infobox.insert(END,"PFAM: " + str(point.pfam.split(".")[0]))
+            #         self.infobox.insert(END,"MOD: " + point.mod)
+            #         self.infobox.insert(END,"NUM IN CLUSTER: " + str(int(self.sizes[i])))
+            #         break
+        except IndexError:
+            pass
     def on_press(self, event):
         if self.toolbar._active is None:
             self.isPressed = True
@@ -86,9 +97,14 @@ class Annotate(object):
             for i, point in enumerate(self.x_points):
                 if (lowerx < self.x_points[i] and self.x_points[i] < upperx and
                             uppery > self.y_points[i] and self.y_points[i] > lowery):
-                    if not self.points[i] in self.selectedpoints:
-                        self.selectedpoints.append(self.points[i])
-                        self.listbox.insert(END,str(self.points[i].name))
+                    for point in self.points:
+                        if (self.points[point].index == i):
+                            if not (self.points[point].name in self.selectedpoints):
+                                self.selectedpoints.append(self.points[point].name)
+                                self.listbox.insert(END,str(self.points[point].name))
+                    # if not self.points[i] in self.selectedpoints:
+                    #     self.selectedpoints.append(self.points[i].name)
+                    #     self.listbox.insert(END,str(self.points[i].name))
 
         self.rect.set_width(0)
         self.rect.set_height(0)
@@ -110,55 +126,65 @@ class Annotate(object):
             for x in self.x1:
                 for y in self.y1:
                     if (x == self.x_points[i] and y == self.y_points[i]):
-                        if not self.points[i] in self.selectedpoints:
-                            self.selectedpoints.append(self.points[i])
-                            self.listbox.insert(END,str(self.points[i].name))
+                        for point in self.points:
+                            if (self.points[point].index == i):
+                                if not (self.points[point].name in self.selectedpoints):
+                                    self.selectedpoints.append(self.points[point].name)
+                                    self.listbox.insert(END,str(self.points[point].name))
+
+                        # if not self.points[i] in self.selectedpoints:
+                        #     self.selectedpoints.append(self.points[i])
+                        #     self.listbox.insert(END,str(self.points[i].name))
 
 
     def on_key(self,event):
-        if event.key == 'escape':
-            self.selectedpoints = []
-            self.selectedseqs = []
-            self.listbox.delete(0, END)
+        try:
+            if event.key == 'escape':
+                self.selectedpoints = []
+                self.selectedseqs = []
+                self.listbox.delete(0, END)
 
-        if event.key == 'r':
-            print "Showing all selected points"
+            if event.key == 'r':
+                print "Showing all selected points"
 
-        if event.key =='n':
-            self.scatter.clear()
-            self.cmapindex += 1
-            if self.cmapindex == len(self.cmaps):
-                self.cmapindex = 0
-            self.scatter.scatter(self.x_points, self.y_points,c=self.colors,cmap=self.cmaps[self.cmapindex],s=self.sizes)
-            self.scatter.figure.canvas.draw()
+            if event.key =='n':
+                self.scatter.clear()
+                self.cmapindex += 1
+                if self.cmapindex == len(self.cmaps):
+                    self.cmapindex = 0
+                self.scatter.add_patch(self.rect)
+                self.scatter.scatter(self.x_points, self.y_points,c=self.colors,cmap=self.cmaps[self.cmapindex],s=self.sizes)
+                self.scatter.figure.canvas.draw()
 
-        if event.key == 'c':
-            self.scatter.clear()
-            new_x = []
-            new_y = []
-            new_colors = []
-            for (i, name) in enumerate(self.points):
-                if self.points[i] in self.selectedpoints:
-                    new_x.append(self.x_points[i])
-                    new_y.append(self.y_points[i])
-                    new_colors.append(self.colors[i])
+            # if event.key == 'c':
+            #     self.scatter.clear()
+            #     new_x = []
+            #     new_y = []
+            #     new_colors = []
+            #     for (i, name) in enumerate(self.points):
+            #         if self.points[i] in self.selectedpoints:
+            #             new_x.append(self.x_points[i])
+            #             new_y.append(self.y_points[i])
+            #             new_colors.append(self.colors[i])
+            #
+            #     self.scatter.scatter(new_x, new_y,c=new_colors,s=self.sizes)
+            #     self.scatter.add_patch(self.rect)
+            #     self.scatter.figure.canvas.draw()
 
-            self.scatter.scatter(new_x, new_y,c=new_colors,s=self.sizes)
-            self.scatter.add_patch(self.rect)
-            self.scatter.figure.canvas.draw()
+            if event.key == 'a':
+                self.scatter.clear()
+                self.scatter.scatter(self.x_points, self.y_points,c=self.colors,cmap=self.cmaps[0],s=self.sizes)
+                self.scatter.add_patch(self.rect)
+                self.scatter.figure.canvas.draw()
 
-        if event.key == 'a':
-            self.scatter.clear()
-            self.scatter.scatter(self.x_points, self.y_points,c=self.colors,cmap=self.cmaps[0],s=self.sizes)
-            self.scatter.add_patch(self.rect)
-            self.scatter.figure.canvas.draw()
-
-        if event.key == 's':
-            with open(self.path, "w") as exportfile:
-                for i, name in enumerate(self.selectedpoints):
-                    exportfile.write(self.selectedpoints[i].line + '\n')
-                    exportfile.write(self.selectedpoints[i].seq + '\n')
-            print "Saved to file!"
+            if event.key == 's':
+                with open(self.path, "w") as exportfile:
+                    for i, name in enumerate(self.selectedpoints):
+                        exportfile.write(self.selectedpoints[i].line + '\n')
+                        exportfile.write(self.selectedpoints[i].seq + '\n')
+                print "Saved to file!"
+        except IndexError:
+            pass
 
     def connect(self):
         self.scatter.figure.canvas.mpl_connect('button_press_event', self.on_press)

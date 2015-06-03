@@ -80,7 +80,7 @@ def main():
             print "Preprocessing the data using MDS..."
             print "Reducing to", tempred, "dimensions"
 
-            tempmatrix = mds_calc.metric_mds(hdfmat,tempred)
+            tempmatrix = mds_calc.svd(hdfmat,tempred)
             matrix = tsne_calc.tsne(inity,False,tempmatrix,no_dims=int(args.dimension),initial_dims=tempred)
 
         elif (args.type == "snepca"):
@@ -127,10 +127,13 @@ def main():
         grouper.savereps(reppath,reps,args.group)
 
     # select correct color array
+    colors = np.zeros(shape=(len(points)))
     if (args.color == 'pfam'):
-        colors = [point.pfamnum for point in points]
+        for point in points:
+            colors[points[point].index] = points[point].pfamnum
     elif (args.color == 'mod'):
-        colors = [point.modcolor for point in points]
+        for point in points:
+            colors[points[point].index] = points[point].modcolor
     elif (args.color == 'group'):
         colors = np.loadtxt(grouppath)
     else:

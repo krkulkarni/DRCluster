@@ -1,6 +1,6 @@
 __author__ = 'kulkarnik'
 
-from sklearn import manifold
+from sklearn import manifold, decomposition
 
 ## Perform the MDS on HDF5 matrix
 ## n_components = final number of dimensions
@@ -14,6 +14,12 @@ def metric_mds(mat,dim):
 
     return coords
 
+def svd(mat,dim):
+    svd = decomposition.TruncatedSVD(n_components=min(50,dim),
+                                     random_state=1)
+    coords = svd.fit_transform(mat)
+
+    return coords
 # def nystrom_frontend(num_objects, num_seeds, dim, dist_func,permute_order=True):
 #     (seed_mat,restore_ids) = approximate_mds.build_seed_matrix(num_objects,num_seeds,dist_func,permute_order)
 #     mdscoords = approximate_mds.nystrom(seed_mat,dim)
