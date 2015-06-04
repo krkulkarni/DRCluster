@@ -5,6 +5,7 @@ import sys
 import os
 import numpy as np
 from lib import updated_readargs, initrun, results_parser, mds_calc, tsne_calc, grouper, plotter
+from scipy import sparse
 import tsne
 #import json
 #from lib import jsonconv
@@ -24,7 +25,7 @@ def main():
     ## Define the paths of BLAST results file and names file
     resultsfile = args.directory + "/results.out"
     fastafile = args.directory + "/" + args.directory.split('/')[-1] + ".fas"
-    matrixpath = args.directory + "/temp/mds.hdf5"
+    matrixpath = args.directory + "/temp/data.txt"
     coordspath = args.directory + "/temp/" + args.directory.split('/')[-1] + "_"+ args.type + "_" + "coords.npy"
     jsonpath = args.directory + "/temp/file.json"
     inity = args.directory + "/temp/inity.npy"
@@ -53,16 +54,24 @@ def main():
         tabParser, tabHandle = initrun.open_file(resultsfile)
         print "Opened BLAST results file"
 
-        hdfmat, mathandle = initrun.create_matrix(args.value,points,matrixpath)
-        print "Initialized matrix"
+        # hdfmat, mathandle = initrun.create_matrix(args.value,points,matrixpath)
+        # print "Initialized matrix"
 
         print "Parsing results"
-        results_parser.next_line_original_format(args.value,tabParser,tabHandle,points,hdfmat)
+        row,col,data = results_parser.next_line_original_format(args.value,tabParser,tabHandle,points)
+        savemat = np.vstack((row,col,data))
+        np.savetxt(matrixpath,savemat)
+
+        scipymat = sparse.coo_matrix((data,(row,col)),shape=(len(points),len(points)))
 
     else:
         print "Retrieving matrix"
-        hdfmat, mathandle = initrun.get_matrix(matrixpath)
+        savemat = initrun.get_matrix(matrixpath)
+        row = savemat[0]
+        col = savemat[1]
+        data = savemat[2]
 
+        scipymat = sparse.coo_matrix((data,(row,col)),shape=(len(points),len(points)))
         ## Run the appropriate dimensionality reduction algorithm
         ## -mdsonly = metric MDS with sklearn's manifold package
         ## -snemds = preprocess to "points/10" dimensions with MDS, then t-SNE for reduced matrix
@@ -71,28 +80,19 @@ def main():
     if (args.cluster):
         if (args.type == "mdsonly"):
             print "Performing MDS"
-            matrix = mds_calc.metric_mds(hdfmat,int(args.dimension))
+            matrix = mds_calc.metric_mds(scipymat.toarray(),int(args.dimension))
 
-        elif (args.type == "snemds"):
+        elif (args.type == "svdsne"):
             print "Performing t-SNE with MDS preprocessing"
 
             ## Partially reduce dimensionality of HDF5 matrix to 1/10th of original size or maximum of 400
             tempred = min(int(len(points)/10),400)
-            print "Preprocessing the data using MDS..."
+            print "Preprocessing the data using SVD..."
             print "Reducing to", tempred, "dimensions"
 
-            tempmatrix = mds_calc.svd(hdfmat,tempred)
+            tempmatrix = mds_calc.svd(scipymat,tempred)
             matrix = tsne.bh_sne(tempmatrix)
             # matrix = tsne_calc.tsne(inity,False,tempmatrix,no_dims=int(args.dimension),initial_dims=tempred)
-
-        elif (args.type == "snepca"):
-            print "Performing t-SNE with PCA preprocessing"
-
-            ## Partially reduce dimensionality of HDF5 matrix to 1/10th of original size or maximum of 400
-            tempred = min(int(len(points)/10),400)
-            print "Reducing to", tempred, "dimensions"
-
-            matrix = tsne_calc.tsne(inity,True,hdfmat,no_dims=int(args.dimension),initial_dims=tempred)
 
         elif (args.type == "sneonly"):
             print "CAUTION: Performing t-SNE on full dissimilarity matrix"
@@ -100,7 +100,7 @@ def main():
             if (len(points) > 2000):
                 print "Too many proteins to perform t-SNE directly"
                 sys.exit(2)
-            matrix = tsne_calc.tsne(inity,False,hdfmat[...],no_dims=int(args.dimension),initial_dims=len(points))
+            matrix = tsne_calc.tsne(inity,False,scipymat.toarray(),no_dims=int(args.dimension),initial_dims=len(points))
         else:
             print "Some error occurred! Please try again."
             sys.exit(2)
@@ -110,7 +110,6 @@ def main():
 
         # save coordinates to file
         np.save(coordspath,matrix)
-        mathandle.close()
 
     else:
         try:
@@ -118,7 +117,6 @@ def main():
             matrix = np.load(coordspath)
         except IOError:
             print "No coordinates in temp"
-        mathandle.close()
 
     if (args.group):
         #groupids = grouping.findkmeans(matrix)

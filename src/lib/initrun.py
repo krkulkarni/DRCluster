@@ -1,7 +1,9 @@
 __author__ = 'kulkarnik'
 import sys
 import h5py
+import numpy as np
 import csv
+from collections import OrderedDict
 import unittest
 #from Bio.Blast.Applications import NcbiblastpCommandline
 
@@ -22,7 +24,7 @@ class AllPointInfo():
 def read_fasta(fastafile):
     pfamdict = dict()
     colornum = 0
-    points = {}
+    points = OrderedDict()
     with open(fastafile) as f:
         index = 0
         for line in f:
@@ -79,10 +81,7 @@ def create_matrix(flag,points,matrixpath):
     return dset, f
 
 def get_matrix(matrixpath):
-    f = h5py.File(matrixpath,"r")
-    dataset = f["dataset"]
-
-    return dataset, f
+    return np.loadtxt(matrixpath)
 
 # def run_blast_tab(queryname,dbname,outfile,fmt,dbsize,ecutoff):
 #     blastP = NcbiblastpCommandline(query=queryname,

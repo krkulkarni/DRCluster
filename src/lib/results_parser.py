@@ -1,5 +1,6 @@
 __author__ = 'kulkarnik'
 import math
+from scipy import sparse
 
 ##Read each line in tab-delimited file and store important variables
 
@@ -11,8 +12,12 @@ import math
 ## eValue   --> e-value of match
 ## bitScore --> bit score of match
 ##
-def next_line_original_format(flag, parser, handle,points,hdfmatrix):
+def next_line_original_format(flag, parser, handle,points):
     ##if the bit flag is on, run addtoBitMatrix
+    row = []
+    col = []
+    data = []
+
     if (flag == 'b'):
         try:
             while (True):
@@ -22,7 +27,7 @@ def next_line_original_format(flag, parser, handle,points,hdfmatrix):
                 qLen = int(line[7].strip())
                 sLen = int(line[9].strip())
                 bitScore = float(line[11].strip())
-                add_to_bit_matrix(qSeqId,qLen,sSeqId,bitScore,sLen,points,hdfmatrix)
+                add_to_bit_matrix(qSeqId,qLen,sSeqId,bitScore,sLen,points)
 
         except StopIteration:
             handle.close()
@@ -37,11 +42,11 @@ def next_line_original_format(flag, parser, handle,points,hdfmatrix):
                 eValue = float(line[10].strip())
 
                 ##REMEMBER TO ADD FLAG OPTION FOR EITHER EVALUE OR BITSCORE MATRIX
-                add_to_e_matrix(qSeqId,sSeqId,eValue,points,hdfmatrix)
+                row, col, data = add_to_e_matrix(qSeqId,sSeqId,eValue,points,row,col,data)
 
         except StopIteration:
             handle.close()
-
+            return row,col,data
 
 
 
@@ -72,7 +77,7 @@ def convert_bit_score(bitscore,querylength,matchlength):
     return abs(value)
 
 ##WORK ON THE SCALED SCORE FOR E VALUES
-def add_to_e_matrix(query,match,e,points,hdfmat):
+def add_to_e_matrix(query,match,e,points,row,col,data):
     ##look up query index and match index
 
     query_index = points[query].index
@@ -87,9 +92,18 @@ def add_to_e_matrix(query,match,e,points,hdfmat):
     #print query ,match, e_scaled_score
 
     ##Only add scaled score to matrix if current entry at position is default value
-    if hdfmat[query_index,match_index] <= 0:
-        hdfmat[query_index,match_index] = e_scaled_score
-        hdfmat[match_index,query_index] = e_scaled_score
+
+    # for r,c in zip(row,col):
+    #     if not (r in row and c in col):
+    row.append(query_index)
+    col.append(match_index)
+    data.append(e_scaled_score)
+    if not (query_index==match_index):
+        row.append(match_index)
+        col.append(query_index)
+        data.append(e_scaled_score)
+
+    return row,col,data
 
 def convert_e_score(evalue):
 

@@ -36,14 +36,14 @@ def arg_parser():
 
     ## This argument chooses the type of clustering algorithm to use
     ## The choices are:
-    ## snepca = run preprocessing of pairwise dissimilarity matrix with principal components analysis (PCA),
+    ## snepca = run preprocessing of (sparse) pairwise dissimilarity matrix with singular value decomposition (SVD),
     ##          and run final clustering with t-SNE
     ## snemds = run preprocessing of pairwise dissimilarity matrix with multidimensional scaling (MDS),
     ##          and run final clustering with t-SNE
-    ## mdsonly = run final clustering on pairwise dissimilarity matrix with MDS
+    ## sneonly = run final clustering on pairwise dissimilarity matrix with t-SNE only
     paraParser.add_argument('-type','--type',
                             help="Choose clustering algorithm",
-                            choices=['snepca','snemds','mdsonly','sneonly'],default='snemds')
+                            choices=['svdsne','mdsonly','sneonly'],default='svdsne')
 
     paraParser.add_argument('-color','--color',
                             help="Choose coloring scheme: modelability, PFAM, or group",

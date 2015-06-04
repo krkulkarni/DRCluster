@@ -15,7 +15,6 @@ def metric_mds(mat,dim):
     return coords
 
 def svd(mat,dim):
-    print mat[:]
     svd = decomposition.TruncatedSVD(n_components=min(50,dim),
                                      random_state=1)
     coords = svd.fit_transform(mat)
