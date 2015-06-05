@@ -28,6 +28,10 @@ def arg_parser():
                             help="Choose what value to use (bitscore or e-value)",
                             choices=['b','e'], default='e')
 
+    paraParser.add_argument('-search', '--search',
+                            help="Choose alignment program (BLAST or HMMER)",
+                            choices=['blast', 'hmmer'], default='blast')
+
     ## This argument chooses between the 2D and 3D options to
     ## graph the protein clusters
     paraParser.add_argument('-dim','--dimension',

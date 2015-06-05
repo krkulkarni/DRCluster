@@ -12,7 +12,7 @@ from scipy import sparse
 ## eValue   --> e-value of match
 ## bitScore --> bit score of match
 ##
-def next_line_original_format(flag, parser, handle,points):
+def next_line_original_format(flag, parser, handle,points,search):
     ##if the bit flag is on, run addtoBitMatrix
     row = []
     col = []
@@ -35,14 +35,27 @@ def next_line_original_format(flag, parser, handle,points):
     ##otherwise run add to Ematrix
     else:
         try:
-            while (True):
-                line = next(parser)
-                qSeqId = line[0].split(";")[0]
-                sSeqId = line[1].split(";")[0]
-                eValue = float(line[10].strip())
+            if (search=='blast'):
+                while (True):
+                    line = next(parser)
+                    qSeqId = line[0].split(";")[0]
+                    sSeqId = line[1].split(";")[0]
+                    eValue = float(line[10].strip())
 
-                ##REMEMBER TO ADD FLAG OPTION FOR EITHER EVALUE OR BITSCORE MATRIX
-                row, col, data = add_to_e_matrix(qSeqId,sSeqId,eValue,points,row,col,data)
+                    ##REMEMBER TO ADD FLAG OPTION FOR EITHER EVALUE OR BITSCORE MATRIX
+                    row, col, data = add_to_e_matrix(qSeqId,sSeqId,eValue,points,row,col,data)
+
+            elif (search=='hmmer'):
+                while (True):
+                    line = next(parser)[0].split()
+                    if (line[0].startswith("#")):
+                        continue
+                    qSeqId = line[0].split(";")[0]
+                    sSeqId = line[2].split(";")[0]
+                    eValue = float(line[4].strip())
+
+                    ##REMEMBER TO ADD FLAG OPTION FOR EITHER EVALUE OR BITSCORE MATRIX
+                    row, col, data = add_to_e_matrix(qSeqId,sSeqId,eValue,points,row,col,data)
 
         except StopIteration:
             handle.close()
@@ -95,18 +108,20 @@ def add_to_e_matrix(query,match,e,points,row,col,data):
 
     # for r,c in zip(row,col):
     #     if not (r in row and c in col):
+    if (query_index==match_index):
+        return row,col,data
+
     row.append(query_index)
     col.append(match_index)
     data.append(e_scaled_score)
-    if not (query_index==match_index):
-        row.append(match_index)
-        col.append(query_index)
-        data.append(e_scaled_score)
+    row.append(match_index)
+    col.append(query_index)
+    data.append(e_scaled_score)
 
     return row,col,data
 
 def convert_e_score(evalue):
-
+    evalue = evalue/10
     try:
         if (evalue>1):
             return 0
@@ -114,13 +129,3 @@ def convert_e_score(evalue):
         
     except ValueError:
         return 250
-    # if (evalue != 0):
-    #     value = -math.log(evalue)
-    # else:
-    #     value = 400
-    #
-    # if (value <= 1):
-    #     value = 1
-    #
-    # value = (1/value)**0.3
-

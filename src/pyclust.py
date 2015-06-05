@@ -24,6 +24,7 @@ def main():
 
     ## Define the paths of BLAST results file and names file
     resultsfile = args.directory + "/results.out"
+    hmmerfile = args.directory + "/tbl.hits"
     fastafile = args.directory + "/" + args.directory.split('/')[-1] + ".fas"
     matrixpath = args.directory + "/temp/data.txt"
     coordspath = args.directory + "/temp/" + args.directory.split('/')[-1] + "_"+ args.type + "_" + "coords.npy"
@@ -51,14 +52,17 @@ def main():
     elif (args.parse):
 
         ## Obtain the handle to the results file
-        tabParser, tabHandle = initrun.open_file(resultsfile)
+        if (args.search == 'blast'):
+            tabParser, tabHandle = initrun.open_file(resultsfile)
+        elif (args.search == "hmmer"):
+            tabParser, tabHandle = initrun.open_file(hmmerfile)
         print "Opened BLAST results file"
 
         # hdfmat, mathandle = initrun.create_matrix(args.value,points,matrixpath)
         # print "Initialized matrix"
 
         print "Parsing results"
-        row,col,data = results_parser.next_line_original_format(args.value,tabParser,tabHandle,points)
+        row,col,data = results_parser.next_line_original_format(args.value,tabParser,tabHandle,points,args.search)
         savemat = np.vstack((row,col,data))
         np.savetxt(matrixpath,savemat)
 
@@ -74,12 +78,15 @@ def main():
         scipymat = sparse.coo_matrix((data,(row,col)),shape=(len(points),len(points)))
         ## Run the appropriate dimensionality reduction algorithm
         ## -mdsonly = metric MDS with sklearn's manifold package
-        ## -snemds = preprocess to "points/10" dimensions with MDS, then t-SNE for reduced matrix
-        ## -snepca = preprocess to "points/10" dimensions with PCA, then t-SNE for reduced matrix
+        ## -svdsne = preprocess to "points/10" dimensions with MDS, then t-SNE for reduced matrix
+        ## -sneonly = t-SNE with van der Maatan algorithm
 
     if (args.cluster):
         if (args.type == "mdsonly"):
             print "Performing MDS"
+            if (len(points) > 2000):
+                print "Too many proteins to perform MDS directly"
+                sys.exit(2)
             matrix = mds_calc.metric_mds(scipymat.toarray(),int(args.dimension))
 
         elif (args.type == "svdsne"):
@@ -119,12 +126,13 @@ def main():
             print "No coordinates in temp"
 
     if (args.group):
+        labels = grouper.dbscan(matrix)
         #groupids = grouping.findkmeans(matrix)
-        print "Grouping points"
-        groupids, reps, sizes = grouper.findgroups(matrix,args.group,points)
-        np.savetxt(grouppath,groupids)
-        np.savetxt(sizepath, sizes)
-        grouper.savereps(reppath,reps,args.group)
+        # print "Grouping points"
+        # groupids, reps, sizes = grouper.findgroups(matrix,args.group,points)
+        # np.savetxt(grouppath,groupids)
+        # np.savetxt(sizepath, sizes)
+        # grouper.savereps(reppath,reps,args.group)
 
     # select correct color array
     colors = np.zeros(shape=(len(points)))
@@ -135,7 +143,8 @@ def main():
         for point in points:
             colors[points[point].index] = points[point].modcolor
     elif (args.color == 'group'):
-        colors = np.loadtxt(grouppath)
+        colors = labels
+        # colors = np.loadtxt(grouppath)
     else:
         print "Some error occurred"
         sys.exit(1)

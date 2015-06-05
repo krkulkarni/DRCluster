@@ -1,3 +1,2 @@
 .idea/*
-.gitignore
-src/lib/*.pyc
+*.pyc
