@@ -93,7 +93,7 @@ def main():
             print "Performing t-SNE with MDS preprocessing"
 
             ## Partially reduce dimensionality of HDF5 matrix to 1/10th of original size or maximum of 400
-            tempred = min(int(len(points)/10),400)
+            tempred = min(int(len(points)/10),500)
             print "Preprocessing the data using SVD..."
             print "Reducing to", tempred, "dimensions"
 
