@@ -3,7 +3,7 @@
 
 Clustering FASTA datasets using dimensionality reduction algorithms.
 
-# Overview
+## Overview
 
 ### BLAST/jackhmmer all vs. all sequence comparison
 - BLAST: Convert FASTA file to protein database and search using FASTA file as query
@@ -23,7 +23,7 @@ Embedding is stored as a two-dimensional numpy array.
 Uses matplotlib to plot embedding with basic annotation tools.
 
 
-## INSTALLATION
+## Installation
 
 Ensure that the file structure for the src/ folder is as follows: (It should already be correct!)
 
@@ -41,7 +41,7 @@ Ensure that the file structure for the src/ folder is as follows: (It should alr
 		- tsne/
 		- tsne_calc.py
 
-### Installation
+### Pip installation
 - We recommend you set up a virtual environment and run the command ```pip install -r requirements.txt```
 - Then run ```pip install tsne```. (The setup for tsne requires the numpy module)
 
@@ -59,7 +59,7 @@ tsne==0.1.1
 
 - Also, you must have a working installation of either BLAST or jackhmmer for all vs. all sequence alignment.
 
-### Walkthrough for usage
+## Walkthrough for usage
 
 Create a folder for output storage. The name of the folder *must* be the name of the the FASTA file. FASTA file name *must* be in the format **example.fas**
 - ```mkdir proteins``` for FASTA file *proteins.fas*
@@ -69,7 +69,7 @@ Move FASTA file to this folder and create a *temp/* directory.
 - ```mkdir temp/```
 
 Run all vs. all sequence comparison. BLAST output must be in table format under the name *results.out*. Jackhmmer output must be in table format under the name *tbl.hits*.
-- ```$HMMERBIN/jackhmmer --tblout tbl.hits proteins.fas proteins.fas```
+- ```jackhmmer --tblout tbl.hits proteins.fas proteins.fas```
 
 Navigate run pyclust.py from src/ directory with the following flags:
 - ```-dir proteins``` name of data folder (e.g. proteins)
