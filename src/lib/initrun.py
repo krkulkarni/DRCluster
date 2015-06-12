@@ -9,7 +9,7 @@ import unittest
 
 class AllPointInfo():
 
-    def __init__(self, line, name, mod, modcolor, pfamnum, pfam):
+    def __init__(self, line, name, mod, modcolor, pfamnum, pfam, index):
         self.line = line
         self.name = name
         self.seq = None
@@ -17,13 +17,14 @@ class AllPointInfo():
         self.modcolor = modcolor
         self.pfamnum = pfamnum
         self.pfam = pfam
+        self.index = index
 
 def read_fasta(fastafile):
-    seqs = []
     pfamdict = dict()
     colornum = 0
-    points = []
+    points = {}
     with open(fastafile) as f:
+        index = 0
         for line in f:
             if (line[0] == "#"):
                 continue
@@ -34,11 +35,12 @@ def read_fasta(fastafile):
                 pfamnum, pfamdict, colornum = _checkpfam(parts[1].strip(),pfamdict,colornum)
                 # create a new point
                 #                      \full line   \name\ modelability  \mod color\ pfamnum\ pfam
-                newpoint = AllPointInfo(line.strip(),name,parts[8].strip(),modcolor,pfamnum, parts[1].strip())
-                points.append(newpoint)
-            else:
-                seqs.append(line.strip())
-                points[-1].seq = line.strip()
+                newpoint = AllPointInfo(line.strip(),name,parts[8].strip(),modcolor,pfamnum, parts[1].strip(),index)
+                index = index+1
+
+                sequence = f.next()
+                newpoint.seq = sequence
+                points[name] = newpoint
 
     return points
 
@@ -52,11 +54,11 @@ def _checkpfam(pfamname, pfamdict,colornum):
 
 def _convertmodtocolor(mod):
     if mod == 'pdb':
-        return 'r'
+        return 1
     elif mod == 'mod':
-        return 'g'
+        return 2
     elif mod == 'notmod':
-        return 'b'
+        return 3
 
 ##Creates handle for results.out file
 def open_file(filename):
@@ -72,7 +74,7 @@ def create_matrix(flag,points,matrixpath):
     f = h5py.File(matrixpath,"w")
     if (flag == 'b'):
         dset = f.create_dataset("dataset",shape=(len(points),len(points)),fillvalue=4)
-    else:
+    elif (flag == 'e'):
         dset = f.create_dataset("dataset",shape=(len(points),len(points)),fillvalue=1)
     return dset, f
 

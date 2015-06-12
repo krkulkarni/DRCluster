@@ -11,38 +11,6 @@ import math
 ## eValue   --> e-value of match
 ## bitScore --> bit score of match
 ##
-
-def next_line_modified_format(flag, parser, handle,points,hdfmatrix):
-    ##if the bit flag is on, run addtoBitMatrix
-    if (flag == 'b'):
-        try:
-            while (True):
-                line = next(parser)
-                qSeqId = line[0].split(";")[0]
-                qLen = int(line[1].strip())
-                sSeqId = line[2].split(";")[0]
-                sLen = int(line[3].strip())
-                bitScore = float(line[5].strip())
-                add_to_bit_matrix(qSeqId,qLen,sSeqId,bitScore,sLen,points,hdfmatrix)
-
-        except StopIteration:
-            handle.close()
-
-    ##otherwise run add to Ematrix
-    else:
-        try:
-            while (True):
-                line = next(parser)
-                qSeqId = line[0].split(";")[0]
-                sSeqId = line[2].split(";")[0]
-                eValue = float(line[4].strip())
-
-                ##REMEMBER TO ADD FLAG OPTION FOR EITHER EVALUE OR BITSCORE MATRIX
-                add_to_e_matrix(qSeqId,sSeqId,eValue,points,hdfmatrix)
-
-        except StopIteration:
-            handle.close()
-
 def next_line_original_format(flag, parser, handle,points,hdfmatrix):
     ##if the bit flag is on, run addtoBitMatrix
     if (flag == 'b'):
@@ -107,11 +75,8 @@ def convert_bit_score(bitscore,querylength,matchlength):
 def add_to_e_matrix(query,match,e,points,hdfmat):
     ##look up query index and match index
 
-    for i, item in enumerate(points):
-        if item.name == query:
-            query_index = i
-        if item.name == match:
-            match_index = i
+    query_index = points[query].index
+    match_index = points[match].index
 
     # query_index = names.index(query)
     # match_index = names.index(match)
