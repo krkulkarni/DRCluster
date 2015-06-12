@@ -4,11 +4,12 @@ import subprocess
 
 class Align(object):
 
-    def __init__(self,fastapath,hmmer):
+    def __init__(self,fastapath,exe,directory):
 
         self.path = fastapath
-        self.base = fastapath.split(".")[0]
-        self.hmmer = hmmer
+        self.base = fastapath.split("/")[-1].split(".")[0]
+        self.exe = exe
+        self.directory = directory
 
 
     def _execute_commands(self,command_array, wait=True):
@@ -31,7 +32,7 @@ class Align(object):
 
         return command_results
 
-    def runjackhmmer(self,fastapath,hmmer,pdbdb,iter,eval):
+    def runjackhmmer(self,iter,evalue):
 
         ## This function accepts the path to the target fasta sequence and the fasta PDB database
         ## and creates a domain hits file (dom.hits),
@@ -40,19 +41,30 @@ class Align(object):
         ## and a hmmer log file (hmmerlog)
         ## see Documentation at http://hmmer.janelia.org/software for additional info
 
-        fastaname = fastapath.split("/")[-1]
-        protname = fastaname.split(".")[0]
+        tblout = "{}/{}.jackhmmer_tbl".format(self.directory,self.base)
 
         comm = [
-             [ hmmer,
-               '--domtblout', 'dom.hits', '--tblout', 'tbl.hits',
-               '-A', 'aln.out', '-o', 'hmmerlog',
-               '--domE', str(eval), '-E', str(eval), '-N', str(iter),
-               fastapath, pdbdb
+             [ self.exe, '--tblout', tblout,
+               '-E', str(evalue), '-N', str(iter),
+               self.path, self.path,
+             ]
+           ]
+
+        print(' '.join(comm[0]))
+        return self._execute_commands(comm)
+        ## Returns jackhmmer ouput
+
+    def runblast(self):
+
+        results = "{}/{}.blast_tbl".format(self.directory)
+        db = "{}/{}".format(self.directory,self.base)
+
+        comm = [
+             [ self.exe, '-query', self.path,
+               '-db', db, '-outfmt', 6, '-out', results
              ]
            ]
 
         print(' '.join(comm[0]))
         r = self._execute_commands(comm)
-        print('result (list of lists) [0]->stdout [1]->stderr:')
-        print(r)
+        #Returns Blast output (should be nothing)
