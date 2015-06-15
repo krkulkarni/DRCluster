@@ -1,5 +1,11 @@
 import sys
+from sklearn import cluster
 sys.setrecursionlimit(100000)
+
+def dbscan(matrix):
+    db = cluster.DBSCAN(eps=1, min_samples=3).fit(matrix)
+    labels = db.labels_
+    return labels
 
 class Object(object):
     def __init__(self,id,x,y):

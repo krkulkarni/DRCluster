@@ -16,11 +16,14 @@ def arg_parser():
     ## 1. temp/mds.hdf5
     ## 2. temp/coords.npy
     ## 3. temp/inity.npy (random generation of points for t-SNE clustering)
-    curr = os.getcwd()
+
+    paraParser.add_argument('-f', '--fasta',
+                            help="Path to FASTA file",
+                            required=True)
 
     paraParser.add_argument('-dir', '--directory',
-                            help="Name of directory with all required info",
-                            default=curr)
+                            help="Name of output directory",
+                            default=None)
 
     ## This argument chooses between the bit score and e-value
     ## as the value to generate the distance matrix
@@ -28,6 +31,22 @@ def arg_parser():
                             help="Choose what value to use (bitscore or e-value)",
                             choices=['b','e'], default='e')
 
+    paraParser.add_argument('-search', '--search',
+                            help="Choose alignment program (BLAST or HMMER)",
+                            choices=['blast', 'hmmer'],
+                            default='hmmer')
+
+    paraParser.add_argument('-blast', '--blastpath',
+                            help="Path to BLAST bin",
+                            default=None)
+
+    paraParser.add_argument('-hmmer', '--hmmerpath',
+                            help="Path to hmmer bin",
+                            default=None)
+
+    paraParser.add_argument('-align', '--alignfile',
+                            help="Jackhmmer or BLAST output file",
+                            default=None)
     ## This argument chooses between the 2D and 3D options to
     ## graph the protein clusters
     paraParser.add_argument('-dim','--dimension',
@@ -36,30 +55,30 @@ def arg_parser():
 
     ## This argument chooses the type of clustering algorithm to use
     ## The choices are:
-    ## snepca = run preprocessing of pairwise dissimilarity matrix with principal components analysis (PCA),
+    ## snepca = run preprocessing of (sparse) pairwise dissimilarity matrix with singular value decomposition (SVD),
     ##          and run final clustering with t-SNE
     ## snemds = run preprocessing of pairwise dissimilarity matrix with multidimensional scaling (MDS),
     ##          and run final clustering with t-SNE
-    ## mdsonly = run final clustering on pairwise dissimilarity matrix with MDS
+    ## sneonly = run final clustering on pairwise dissimilarity matrix with t-SNE only
     paraParser.add_argument('-type','--type',
                             help="Choose clustering algorithm",
-                            choices=['snepca','snemds','mdsonly','sneonly'],default='snemds')
+                            choices=['svdsne','mdsonly','sneonly'],default='svdsne')
 
     paraParser.add_argument('-color','--color',
                             help="Choose coloring scheme: modelability, PFAM, or group",
                             choices=['pfam', 'mod', 'group'],default='mod')
 
     ## Choose this argument if BLAST results are preparsed and HDF5 dissimilarity matrix has already been populated
-    paraParser.add_argument('-parse', '--parse',
-                            help="Parse BLAST into HDF-formatted distance matrix",
+    paraParser.add_argument('-parsed', '--preparsed',
+                            help="Results have already been parsed into a similarity matrix",
                             action="store_true")
 
     paraParser.add_argument('-load', '--load',
                             help="Load coordinates from Numpy coordinate matrix")
 
     ## Choose this argument if clustering algorithm has already been run and coords.npy file is stored
-    paraParser.add_argument('-cluster', '--cluster',
-                            help="Perform MDS Calculation",
+    paraParser.add_argument('-clustered', '--preclustered',
+                            help="Clustering algorithm has already been applied",
                             action="store_true")
 
     paraParser.add_argument('-group', '--group',
