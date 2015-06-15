@@ -93,28 +93,24 @@ def add_to_bit_matrix(query,match,bitscore,querylen,points,row,col,data):
     ##convert bit score into a scaled score
     bit_scaled_score = convert_bit_score(bitscore,querylen)
 
-    #print query ,match, e_scaled_score
 
     ##Only add scaled score to matrix if current entry at position is default value
 
-    # for r,c in zip(row,col):
-    #     if not (r in row and c in col):
     if (query_index==match_index):
         return row,col,data
 
     row.append(query_index)
     col.append(match_index)
-    data.append(e_scaled_score)
+    data.append(bit_scaled_score)
     row.append(match_index)
     col.append(query_index)
-    data.append(e_scaled_score)
+    data.append(bit_scaled_score)
 
     return row,col,data
 
 
 def convert_bit_score(bitscore,querylength):
-    divisor = min(querylength,matchlength)
-    value = (math.log(.25/(bitscore/divisor))+2)
+    value = (math.log(.25/(bitscore/querylength))+2)
     return abs(value)
 
 ##WORK ON THE SCALED SCORE FOR E VALUES
@@ -124,18 +120,10 @@ def add_to_e_matrix(query,match,e,points,row,col,data):
     query_index = points[query].index
     match_index = points[match].index
 
-    # query_index = names.index(query)
-    # match_index = names.index(match)
-
     ##convert bit score into a scaled score
     e_scaled_score = convert_e_score(e)
 
-    #print query ,match, e_scaled_score
-
     ##Only add scaled score to matrix if current entry at position is default value
-
-    # for r,c in zip(row,col):
-    #     if not (r in row and c in col):
     if (query_index==match_index):
         return row,col,data
 

@@ -37,11 +37,11 @@ def arg_parser():
                             default='hmmer')
 
     paraParser.add_argument('-blast', '--blastpath',
-                            help="Path to BLASTp executable",
+                            help="Path to BLAST bin",
                             default=None)
 
     paraParser.add_argument('-hmmer', '--hmmerpath',
-                            help="Path to jackhmmer executable",
+                            help="Path to hmmer bin",
                             default=None)
 
     paraParser.add_argument('-align', '--alignfile',

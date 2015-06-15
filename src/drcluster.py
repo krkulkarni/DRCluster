@@ -12,6 +12,65 @@ import tsne
 
 __author__ = "kulkarnik"
 
+## The Algorithm class holds the three methods of dimensionality reduction.
+
+## SVD - tSNE hybrid: svdsne()
+## First performs singular value decomposition directly on sparse matrix
+## to reduce the noise of dataset.
+## Then, runs t-SNE with Barnes-Hut approximation on intermediate dataset
+## to reduce to coordinate embedding
+
+## Euclidean Multidimensional Scaling: mdsonly()
+## Use with caution! It fails on large datasets
+## Convert sparse matrix to dense matrix
+## and perform linear dimensionality reduction
+## treating similarity values as Euclidean distances
+
+## t-SNE only: sneonly()
+## Use with caution! This method fails under most conditions,
+## due to the organization of the sparse similarity matrix
+## Runs t-SNE algorithm directly on full matrix, without intermediate reduction,
+## and without Barnes-Hut approximation
+
+class Algorithm(object):
+
+    def __init__(self,scipymat,pointslen,dim):
+        self.scipymat = scipymat
+        self.pointslen = pointslen
+        self.dim = dim
+
+    def svdsne(self,*args):
+        print("Performing svdsne")
+        tempred = min(self.pointslen/10,500)
+        tempmatrix = mds_calc.svd(self.scipymat,tempred)
+        matrix = tsne.bh_sne(tempmatrix)
+        return matrix
+
+
+    def mdsonly(self,*args):
+        print("Performing mdsonly")
+        if (self.pointslen > 2000):
+            print "Too many proteins to perform MDS directly"
+            sys.exit(2)
+        matrix = mds_calc.metric_mds(self.scipymat.toarray(),self.dim)
+        return matrix
+
+
+    def sneonly(self,reinit,directory):
+        print("Performing sneonly")
+        inity = "{}/inity.npy".format(directory)
+        if (reinit):
+            try:
+                os.remove(inity)
+            except OSError:
+                print "No initial inity file"
+        if (self.pointslen > 2000):
+            print "Too many proteins to perform t-SNE directly"
+            sys.exit(2)
+        matrix = tsne_calc.tsne(inity,False,scipymat.toarray(),
+                                no_dims=self.dim,
+                                initial_dims=self.pointslen)
+        return matrix
 
 class DRClusterRun(object):
 
@@ -20,37 +79,49 @@ class DRClusterRun(object):
         self.args = args
         self.base = self.args.fasta.split("/")[-1].split(".")[0]
 
-        # Create temp directory to hold parsed matrix and embedded coordinates (and other data)
+        # Creates directory to hold parsed matrix and embedded coordinates (and other data)
+        # Directory is created in the current working directory, with the base name of the fasta file
         if not (self.args.directory):
             if not os.path.exists("{}/".format(self.base)):
                 os.makedirs(self.base)
             self.args.directory = "{}/".format(self.base)
 
-        # Assign executable based on alignment type
+        # Assign bin file based on alignment type
         if (self.args.search == 'blast'):
-            self.executable = self.args.blastpath
+            self.exebin = self.args.blastpath
         elif (self.args.search == 'hmmer'):
-            self.executable = self.args.hmmerpath
+            self.exebin = self.args.hmmerpath
 
+        # Create dictionary of points from fastafile
+        # See lib/initrun.py for more details
         self.points = initrun.read_fasta(args.fasta)
 
 
     def sequencealignment(self):
         # Run sequence alignment based on alignment type
-        runObj = runseqalign.Align(self.args.fasta,self.executable,self.args.directory)
+
+        # Runobj is initialized with fastapath, path to executables,
+        # and directory in which to store results
+        runObj = runseqalign.Align(self.args.fasta,self.exebin,self.args.directory)
+
         if (self.args.search == 'hmmer'):
+            ## Jackhmmer summary is stored in directory/base.jackhmmer_out
             jackhmmerout = "{}/{}.jackhmmer_out".format(self.args.directory,self.base)
+
+            ## Jackhmmer all vs all output is stored in directory/base.jackhmmer_tbl
             output = runObj.runjackhmmer(5,1.0)
             self.args.alignfile = "{}/{}.jackhmmer_tbl".format(self.args.directory,self.base)
             with open(jackhmmerout, 'wb') as f:
                 f.write(output[0][0])
+
         elif (self.args.search == 'blast'):
+            ## BLAST all vs all output is stored in directory/base.blast_tbl
             output = runObj.runblast()
             self.args.alignfile = "{}/{}.blast_tbl".format(self.args.directory,self.base)
 
     def parseOutput(self):
         # Parse either the jackhmmer or BLAST output
-        matrixpath = "{}/data.txt".format(self.args.directory)
+        matrixpath = "{}/sparsedata.txt".format(self.args.directory)
         if not (self.args.preparsed):
             tabParser, tabHandle = initrun.open_file(self.args.alignfile)
             row,col,data = results_parser.next_line_original_format(self.args.value,
@@ -71,56 +142,31 @@ class DRClusterRun(object):
 
     def runClustering(self,scipymat):
         # Run the appropriate clustering algorithm
+        # See lib/mds_calc.py for more details
         coordspath = "{}/{}_{}_coords.npy".format(self.args.directory,self.base,self.args.type)
+        alg = Algorithm(scipymat,int(len(self.points)),int(self.args.dimension))
 
         options = {
-            'svdsne': self._svdsne,
-            'mdsonly': self._mdsonly,
-            'sneonly': self._sneonly
+            'svdsne': alg.svdsne,
+            'mdsonly': alg.mdsonly,
+            'sneonly': alg.sneonly
         }
 
         if not (self.args.preclustered):
-            matrix = options[self.args.type](scipymat)
-            np.save(coordspath,matrix)
+            matrix = options[self.args.type](self.args.reinitialize,self.args.directory)
+            np.savetxt(coordspath,matrix)
 
         else:
-            matrix = np.load(coordspath)
+            matrix = np.loadtxt(coordspath)
 
         return matrix
 
-    def _svdsne(self,scipymat):
-        tempred = min(int(len(self.points)/10),500)
-        tempmatrix = mds_calc.svd(scipymat,tempred)
-        matrix = tsne.bh_sne(tempmatrix)
-        return matrix
-
-
-    def _mdsonly(self,scipymat):
-        if (len(self.points) > 2000):
-            print "Too many proteins to perform MDS directly"
-            sys.exit(2)
-        matrix = mds_calc.metric_mds(scipymat.toarray(),int(self.args.dimension))
-        return matrix
-
-
-    def _sneonly(self,scipymat):
-        inity = "{}/inity.npy".format(self.args.directory)
-        if (self.args.reinitialize):
-            try:
-                os.remove(inity)
-            except OSError:
-                print "No initial inity file"
-        if (len(self.points) > 2000):
-            print "Too many proteins to perform t-SNE directly"
-            sys.exit(2)
-        matrix = tsne_calc.tsne(inity,False,scipymat.toarray(),
-                                no_dims=int(self.args.dimension),
-                                initial_dims=len(self.points))
-        return matrix
 
     def createColors(self,matrix):
+        # Initialize a colors array
         colors = np.zeros(shape=(len(self.points)))
 
+        # Derive colors based on color flag
         if (self.args.color == 'pfam'):
             for name, point in self.points.iteritems():
                 colors[point.index] = point.pfamnum
@@ -138,7 +184,8 @@ class DRClusterRun(object):
 
     def plotCoordinates(self,matrix,colors):
         sizespath = "{}/allsizes.txt".format(self.args.directory)
-        if (self.args.directory.split('/')[-1] == "total_ub" or self.args.directory.split('/')[-1] == "full_ub"):
+        if (self.args.directory.split('/')[-1] == "total_ub" or
+                    self.args.directory.split('/')[-1] == "full_ub"):
             point_sizes = np.loadtxt(sizespath)
         else:
             point_sizes = 20
@@ -150,7 +197,7 @@ class DRClusterRun(object):
 
 ##RUN THE CODE
 if (__name__ == '__main__'):
-    t0 = time.clock()
+    t0 = time.time()
     print("Running script")
 
     args = updated_readargs.arg_parser()
@@ -178,184 +225,7 @@ if (__name__ == '__main__'):
     colors = runclust.createColors(matrix)
 
     print("{} points in dataset".format(len(matrix)))
-    print("Took {} seconds".format(time.clock()-t0))
+    print("Took {} seconds".format(time.time()-t0))
 
     print("Plotting with Matplotlib")
     runclust.plotCoordinates(matrix,colors)
-
-
-# def main():
-#     ## Get the starting time to measure the time of the run
-#     print "Running script..."
-#     t0 = time.clock()
-#
-#     ## Obtain all the info from the arguments passed
-#     args = updated_readargs.arg_parser()
-#     print "Parsed arguments"
-#
-#     if not (args.directory):
-#         if not os.path.exists("temp/"):
-#             os.makedirs("temp")
-#         args.directory = "temp/"
-#     ## Define the paths of BLAST results file and names file
-#     if (args.search == 'blast'):
-#         resultsfile = args.alignfile
-#         hmmerfile=''
-#     elif (args.search == 'hmmer'):
-#         hmmerfile = args.alignfile
-#         resultsfile=''
-#     else:
-#         "Some error occurred"
-#         raise EnvironmentError
-#
-#     base = args.fasta.split("/")[-1].split(".")[0]
-#     matrixpath = "{}/data.txt".format(args.directory)
-#     coordspath = "{}/{}_{}_coords.npy".format(args.directory,base,args.type)
-#     jsonpath = "{}/file.json".format(args.directory)
-#     inity = "{}/inity.npy".format(args.directory)
-#     grouppath = "{}/groups.txt".format(args.directory)
-#     sizepath = "{}/sizes.txt".format(args.directory)
-#     reppath = "{}/reps.txt".format(args.directory)
-#
-#     if (args.reinitialize):
-#         try:
-#             os.remove(inity)
-#         except OSError:
-#             print "No initial inity file"
-#
-#     ## Obtain colors and names from names file
-#     points = initrun.read_fasta(args.fasta)
-#     print "Read FASTA file"
-#
-#     ## Check if coordinates have already been mapped
-#     if (args.load):
-#         print "Loading coordinates from path"
-#         matrix = np.load(args.load)
-#
-#
-#     elif (args.parse):
-#
-#         ## Obtain the handle to the results file
-#         if (args.search == 'blast'):
-#             tabParser, tabHandle = initrun.open_file(resultsfile)
-#         elif (args.search == "hmmer"):
-#             tabParser, tabHandle = initrun.open_file(hmmerfile)
-#         else:
-#             print("Some error occurred")
-#             raise EnvironmentError
-#
-#         print "Opened BLAST results file"
-#
-#         # hdfmat, mathandle = initrun.create_matrix(args.value,points,matrixpath)
-#         # print "Initialized matrix"
-#
-#         print "Parsing results"
-#         row,col,data = results_parser.next_line_original_format(args.value,tabParser,tabHandle,points,args.search)
-#         savemat = np.vstack((row,col,data))
-#         np.savetxt(matrixpath,savemat)
-#
-#         scipymat = sparse.coo_matrix((data,(row,col)),shape=(len(points),len(points)))
-#
-#     else:
-#         print "Retrieving matrix"
-#         savemat = initrun.get_matrix(matrixpath)
-#         row = savemat[0]
-#         col = savemat[1]
-#         data = savemat[2]
-#
-#         scipymat = sparse.coo_matrix((data,(row,col)),shape=(len(points),len(points)))
-#
-#
-#     ## Run the appropriate dimensionality reduction algorithm
-#     ## -mdsonly = metric MDS with sklearn's manifold package
-#     ## -svdsne = preprocess to "points/10" dimensions with MDS, then t-SNE for reduced matrix
-#     ## -sneonly = t-SNE with van der Maatan algorithm
-#
-#     if (args.cluster):
-#         if (args.type == "mdsonly"):
-#             print "Performing MDS"
-#             if (len(points) > 2000):
-#                 print "Too many proteins to perform MDS directly"
-#                 sys.exit(2)
-#             matrix = mds_calc.metric_mds(scipymat.toarray(),int(args.dimension))
-#
-#         elif (args.type == "svdsne"):
-#             print "Performing t-SNE with MDS preprocessing"
-#
-#             ## Partially reduce dimensionality of HDF5 matrix to 1/10th of original size or maximum of 400
-#             tempred = min(int(len(points)/10),500)
-#             print "Preprocessing the data using SVD..."
-#             print "Reducing to", tempred, "dimensions"
-#
-#             tempmatrix = mds_calc.svd(scipymat,tempred)
-#             matrix = tsne.bh_sne(tempmatrix)
-#             # matrix = tsne_calc.tsne(inity,False,tempmatrix,no_dims=int(args.dimension),initial_dims=tempred)
-#
-#         elif (args.type == "sneonly"):
-#             print "CAUTION: Performing t-SNE on full dissimilarity matrix"
-#
-#             if (len(points) > 2000):
-#                 print "Too many proteins to perform t-SNE directly"
-#                 sys.exit(2)
-#             matrix = tsne_calc.tsne(inity,False,scipymat.toarray(),no_dims=int(args.dimension),initial_dims=len(points))
-#         else:
-#             print "Some error occurred! Please try again."
-#             raise EnvironmentError
-#
-#         # save coordinates to file
-#         np.save(coordspath,matrix)
-#
-#     else:
-#         try:
-#             print "Loading coordinates from temp: " + args.type
-#             matrix = np.load(coordspath)
-#         except IOError:
-#             print "No coordinates in temp"
-#
-#     if (args.group):
-#         labels = grouper.dbscan(matrix)
-#         #groupids = grouping.findkmeans(matrix)
-#         # print "Grouping points"
-#         # groupids, reps, sizes = grouper.findgroups(matrix,args.group,points)
-#         # np.savetxt(grouppath,groupids)
-#         # np.savetxt(sizepath, sizes)
-#         # grouper.savereps(reppath,reps,args.group)
-#
-#     # select correct color array
-#     colors = np.zeros(shape=(len(points)))
-#     if (args.color == 'pfam'):
-#         for point in points:
-#             colors[points[point].index] = points[point].pfamnum
-#     elif (args.color == 'mod'):
-#         for point in points:
-#             colors[points[point].index] = points[point].modcolor
-#     elif (args.color == 'group'):
-#         colors = labels
-#         # colors = np.loadtxt(grouppath)
-#     else:
-#         print "Some error occurred"
-#         sys.exit(1)
-#
-#     print len(matrix), "points in dataset"
-#     print "Took", time.clock()-t0, "seconds"
-#
-#     #with open(jsonpath, 'w') as jsonout:
-#     #    json.dump(jsonconv.jsonmaker(colors,lines,matrix,args.format), jsonout, indent=2)
-#
-#     ## Plot the results with matplotlib's PyPlot
-#     if (args.plot):
-#         print "Plotting",len(matrix), "points"
-#         ## load sizes manually!!!
-#         if (args.directory.split('/')[-1] == "total_ub" or args.directory.split('/')[-1] == "full_ub"):
-#             point_sizes = np.loadtxt(args.directory + "/allsizes.txt")
-#         else:
-#             point_sizes = 20
-#         if (int(args.dimension) == 2):
-#             plotter.pyplotter2d(matrix,colors,args.directory,points,point_sizes)
-#
-#         elif (int(args.dimension) == 3):
-#             plotter.pyplotter3d(matrix,colors)
-
-
-
-
