@@ -4,19 +4,6 @@ import argparse, os,sys
 def arg_parser():
     paraParser = argparse.ArgumentParser(description='Clustering analysis of BLAST output using MDS algorithm')
 
-    ## This argument accepts the name of the directory with all required files
-    ##
-    ## Inputted directory must contain:
-    ## 1. Temp directory (this will store dissimilarity matrix [mds.hdf5] and calculated coordinates [coords.npy])
-    ## 2. BLAST results file with the name "results.out"
-    ## 3. Text file with namestrings of proteins with the name "names_all"
-    ##      namestrings must be in the format: "name of protein","name of family" if you want coloring
-    ##
-    ## Clustering will create/read from:
-    ## 1. temp/mds.hdf5
-    ## 2. temp/coords.npy
-    ## 3. temp/inity.npy (random generation of points for t-SNE clustering)
-
     paraParser.add_argument('-f', '--fasta',
                             help="Path to FASTA file",
                             required=True)
@@ -36,12 +23,8 @@ def arg_parser():
                             choices=['blast', 'hmmer'],
                             default='hmmer')
 
-    paraParser.add_argument('-blast', '--blastpath',
-                            help="Path to BLAST bin",
-                            default=None)
-
-    paraParser.add_argument('-hmmer', '--hmmerpath',
-                            help="Path to hmmer bin",
+    paraParser.add_argument('-bin', '--exebin',
+                            help="Path to binary executables, either BLAST or hmmer",
                             default=None)
 
     paraParser.add_argument('-align', '--alignfile',
@@ -55,10 +38,9 @@ def arg_parser():
 
     ## This argument chooses the type of clustering algorithm to use
     ## The choices are:
-    ## snepca = run preprocessing of (sparse) pairwise dissimilarity matrix with singular value decomposition (SVD),
+    ## svdsne = run preprocessing of (sparse) pairwise dissimilarity matrix with singular value decomposition (SVD),
     ##          and run final clustering with t-SNE
-    ## snemds = run preprocessing of pairwise dissimilarity matrix with multidimensional scaling (MDS),
-    ##          and run final clustering with t-SNE
+    ## mdsonly = run final clustering on pairwise dissimilarity matrix with MDS only
     ## sneonly = run final clustering on pairwise dissimilarity matrix with t-SNE only
     paraParser.add_argument('-type','--type',
                             help="Choose clustering algorithm",
@@ -73,8 +55,6 @@ def arg_parser():
                             help="Results have already been parsed into a similarity matrix",
                             action="store_true")
 
-    paraParser.add_argument('-load', '--load',
-                            help="Load coordinates from Numpy coordinate matrix")
 
     ## Choose this argument if clustering algorithm has already been run and coords.npy file is stored
     paraParser.add_argument('-clustered', '--preclustered',
@@ -94,6 +74,14 @@ def arg_parser():
     paraParser.add_argument('-reinit','--reinitialize',
                             help="Create new random initialization of points",
                             action="store_true")
+
+    paraParser.add_argument('-a', '--annotated',
+                            help="FASTA files are annotated with the PFAM and mod headers",
+                            action="store_true")
+
+    paraParser.add_argument('-perp', '--perplexity',
+                            help="Set the number of neighbors to use in the t-SNE algorithm",
+                            default=30.)
 
     args = paraParser.parse_args()
 

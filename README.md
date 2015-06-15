@@ -22,25 +22,6 @@ Embedding is stored as a two-dimensional numpy array.
 
 Uses matplotlib to plot embedding with basic annotation tools.
 
-
-## Installation
-
-Ensure that the file structure for the src/ folder is as follows: (It should already be correct!)
-
-- src
-	- pyclust.py
-	- lib/
-		- annotation.py
-		- grouper.py
-		- initrun.py
-		- jsonconv.py
-		- mds_calc.py
-		- plotter.py
-		- readargs.py
-		- results_parser.py
-		- tsne/
-		- tsne_calc.py
-
 ### Pip installation
 - We recommend you set up a virtual environment and run the command ```pip install -r requirements.txt```
 - Then run ```pip install tsne```. (The setup for tsne requires the numpy module)
@@ -48,7 +29,7 @@ Ensure that the file structure for the src/ folder is as follows: (It should alr
 - Alternatively, install all the packages in requirements.txt manually.
 
 
-Requirements.txt contents:
+Required modules:
 ```
 Cython==0.22
 matplotlib==1.4.3
@@ -59,21 +40,40 @@ tsne==0.1.1
 
 - Also, you must have a working installation of either BLAST or jackhmmer for all vs. all sequence alignment.
 
-## Walkthrough for usage
+## Walkthrough for minimal usage
 
-Create a folder for output storage. The name of the folder *must* be the name of the the FASTA file. FASTA file name *must* be in the format **example.fas**
-- ```mkdir proteins``` for FASTA file *proteins.fas*
+Select sequence alignment type using the -search flag. If no flag is specified, default is HMMER.
+- ```-search hmmer```
 
-Move FASTA file to this folder and create a *temp/* directory.
-- ```mv proteins.fas proteins/```
-- ```mkdir temp/```
+Either provide a path to HMMER or BLAST executables, or a path to an alignment file.
+- ```-align my/hmmer/results```
+- ```-bin my/hmmer/bin```
+- Ensure that the results file or bin correspond to selected sequence alignment type
 
-Run all vs. all sequence comparison. BLAST output must be in table format under the name *results.out*. Jackhmmer output must be in table format under the name *tbl.hits*.
-- ```jackhmmer --tblout tbl.hits proteins.fas proteins.fas```
+Matplotlib generated plot with ```-plot``` flag
 
-Navigate run pyclust.py from src/ directory with the following flags:
-- ```-dir proteins``` name of data folder (e.g. proteins)
-- ```-parse``` parse into similarity matrix
-- ```-cluster``` cluster using SVD/t-SNE
-- ```-plot``` plot using Matplotlib
-- E.g. ```python /Path/to/src/pyclust.py -dir proteins -parse -cluster -plot```
+Complete DRCluster command:
+- ```drcluster -search hmmer -bin path/hmmer/bin -plot```
+
+## Using annotated FASTA files
+
+To get coloring based on modelability and PFAM, format FASTA headers into the following: (note that a comparison to PDB database is required)
+
+>*name*;*pfamID*;dom#;domlength;fulllength;domevalue;fullevalue;%len;modelability
+
+- Ex. ```>TR42;PF00240;1;63;120;3e-05;4e-4;88;mod```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

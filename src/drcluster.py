@@ -39,11 +39,11 @@ class Algorithm(object):
         self.pointslen = pointslen
         self.dim = dim
 
-    def svdsne(self,*args):
+    def svdsne(self,perp):
         print("Performing svdsne")
         tempred = min(self.pointslen/10,500)
         tempmatrix = mds_calc.svd(self.scipymat,tempred)
-        matrix = tsne.bh_sne(tempmatrix)
+        matrix = tsne.bh_sne(tempmatrix,perplexity=perp)
         return matrix
 
 
@@ -56,7 +56,7 @@ class Algorithm(object):
         return matrix
 
 
-    def sneonly(self,reinit,directory):
+    def sneonly(self,reinit,directory,**kwargs):
         print("Performing sneonly")
         inity = "{}/inity.npy".format(directory)
         if (reinit):
@@ -86,15 +86,12 @@ class DRClusterRun(object):
                 os.makedirs(self.base)
             self.args.directory = "{}/".format(self.base)
 
-        # Assign bin file based on alignment type
-        if (self.args.search == 'blast'):
-            self.exebin = self.args.blastpath
-        elif (self.args.search == 'hmmer'):
-            self.exebin = self.args.hmmerpath
-
+        elif not (os.path.exists(self.args.directory)):
+            os.makedirs(self.args.directory)
+            
         # Create dictionary of points from fastafile
         # See lib/initrun.py for more details
-        self.points = initrun.read_fasta(args.fasta)
+        self.points = initrun.read_fasta(self.args.fasta,self.args.annotated)
 
 
     def sequencealignment(self):
@@ -102,21 +99,33 @@ class DRClusterRun(object):
 
         # Runobj is initialized with fastapath, path to executables,
         # and directory in which to store results
-        runObj = runseqalign.Align(self.args.fasta,self.exebin,self.args.directory)
+        runObj = runseqalign.Align(self.args.fasta,self.args.exebin,self.args.directory)
 
         if (self.args.search == 'hmmer'):
             ## Jackhmmer summary is stored in directory/base.jackhmmer_out
             jackhmmerout = "{}/{}.jackhmmer_out".format(self.args.directory,self.base)
 
             ## Jackhmmer all vs all output is stored in directory/base.jackhmmer_tbl
-            output = runObj.runjackhmmer(5,1.0)
+            try:
+                output = runObj.runjackhmmer(5,1.0)
+            except OSError:
+                print("\nUnable to perform jackhmmer sequence alignment.\n"
+                      "Check the commands above for correctness.\n"
+                      "Did you pass the right executable directory with -bin?")
+                sys.exit(1)
             self.args.alignfile = "{}/{}.jackhmmer_tbl".format(self.args.directory,self.base)
             with open(jackhmmerout, 'wb') as f:
                 f.write(output[0][0])
 
         elif (self.args.search == 'blast'):
             ## BLAST all vs all output is stored in directory/base.blast_tbl
-            output = runObj.runblast()
+            try:
+                output = runObj.runblast()
+            except OSError:
+                print("\nUnable to perform BLAST sequence alignment.\n"
+                      "Check the commands above for correctness.\n"
+                      "Did you pass the right executable directory with -bin?")
+                sys.exit(1)
             self.args.alignfile = "{}/{}.blast_tbl".format(self.args.directory,self.base)
 
     def parseOutput(self):
@@ -143,17 +152,16 @@ class DRClusterRun(object):
     def runClustering(self,scipymat):
         # Run the appropriate clustering algorithm
         # See lib/mds_calc.py for more details
-        coordspath = "{}/{}_{}_coords.npy".format(self.args.directory,self.base,self.args.type)
+        coordspath = "{}/{}_{}_coords.txt".format(self.args.directory,self.base,self.args.type)
         alg = Algorithm(scipymat,int(len(self.points)),int(self.args.dimension))
 
-        options = {
-            'svdsne': alg.svdsne,
-            'mdsonly': alg.mdsonly,
-            'sneonly': alg.sneonly
-        }
-
         if not (self.args.preclustered):
-            matrix = options[self.args.type](self.args.reinitialize,self.args.directory)
+            if (self.args.type == "svdsne"):
+                matrix = alg.svdsne(int(self.args.perplexity))
+            elif (self.args.type == "mdsonly"):
+                matrix = alg.mdsonly()
+            else:
+                matrix = alg.sneonly(self.args.reinitialize,self.args.directory)
             np.savetxt(coordspath,matrix)
 
         else:
@@ -205,10 +213,18 @@ if (__name__ == '__main__'):
     print("Initializing DRCluster")
     runclust = DRClusterRun(args)
 
+    print ("{} search type selected!".format(args.search))
+
     if not (args.alignfile):
         print("Do you want to run {} sequence alignment? y or n".format(args.search))
         if (raw_input() == 'y'):
-            runclust.sequencealignment()
+            if not (args.exebin):
+                print("Run stopped\n"
+                      "No directory specified for sequence alignment\n"
+                      "Did you forget to use the -bin flag?")
+                sys.exit(0)
+            else:
+                runclust.sequencealignment()
         else:
             print("Run stopped\n"
                   "Either run sequence alignment "
@@ -227,5 +243,6 @@ if (__name__ == '__main__'):
     print("{} points in dataset".format(len(matrix)))
     print("Took {} seconds".format(time.time()-t0))
 
-    print("Plotting with Matplotlib")
-    runclust.plotCoordinates(matrix,colors)
+    if (args.plot):
+        print("Plotting with Matplotlib")
+        runclust.plotCoordinates(matrix,colors)

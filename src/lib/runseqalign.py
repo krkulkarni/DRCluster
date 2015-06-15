@@ -67,7 +67,7 @@ class Align(object):
 
         # Command to create binary database to search
         comm0 = [ makeblastdb, '-in', self.path,
-                  '-out', self.base, '-dbtype', 'prot']
+                  '-out', db, '-dbtype', 'prot']
         print ' '.join(comm0)
 
         # Command to run all vs all BLAST
