@@ -23,13 +23,20 @@ def arg_parser():
                             choices=['blast', 'hmmer'],
                             default='hmmer')
 
-    paraParser.add_argument('-bin', '--exebin',
+    group = paraParser.add_mutually_exclusive_group(required=True)
+
+    group.add_argument('-bin', '--exebin',
                             help="Path to binary executables, either BLAST or hmmer",
                             default=None)
 
-    paraParser.add_argument('-align', '--alignfile',
+    group.add_argument('-align', '--alignfile',
                             help="Jackhmmer or BLAST output file",
                             default=None)
+
+    paraParser.add_argument('-e', '--evalue',
+                            help="Evalue for sequence alignment",
+                            type=float,default=1.0)
+
     ## This argument chooses between the 2D and 3D options to
     ## graph the protein clusters
     paraParser.add_argument('-dim','--dimension',
@@ -81,7 +88,7 @@ def arg_parser():
 
     paraParser.add_argument('-perp', '--perplexity',
                             help="Set the number of neighbors to use in the t-SNE algorithm",
-                            default=30.)
+                            type=float,default=30.0)
 
     args = paraParser.parse_args()
 

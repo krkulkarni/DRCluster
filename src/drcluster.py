@@ -81,14 +81,21 @@ class DRClusterRun(object):
 
         # Creates directory to hold parsed matrix and embedded coordinates (and other data)
         # Directory is created in the current working directory, with the base name of the fasta file
-        if not (self.args.directory):
-            if not os.path.exists("{}/".format(self.base)):
-                os.makedirs(self.base)
-            self.args.directory = "{}/".format(self.base)
+        try:
+            if not (self.args.directory):
+                if not os.path.exists("{}/".format(self.base)):
+                    os.makedirs(self.base)
+                self.args.directory = "{}/".format(self.base)
 
-        elif not (os.path.exists(self.args.directory)):
-            os.makedirs(self.args.directory)
-            
+            elif not (os.path.exists(self.args.directory)):
+                os.makedirs(self.args.directory)
+        except OSError as err:
+            print("Directory with FASTA name exists\n"
+                  "Using directory with name {}_dir/".format(self.base))
+            dirname = "{}_dir/".format(self.base)
+            if not (os.path.exists(dirname)):
+                os.makedirs(dirname)
+            self.args.directory = dirname
         # Create dictionary of points from fastafile
         # See lib/initrun.py for more details
         self.points = initrun.read_fasta(self.args.fasta,self.args.annotated)
@@ -107,7 +114,7 @@ class DRClusterRun(object):
 
             ## Jackhmmer all vs all output is stored in directory/base.jackhmmer_tbl
             try:
-                output = runObj.runjackhmmer(5,1.0)
+                output = runObj.runjackhmmer(5,args.evalue)
             except OSError:
                 print("\nUnable to perform jackhmmer sequence alignment.\n"
                       "Check the commands above for correctness.\n"
@@ -120,7 +127,7 @@ class DRClusterRun(object):
         elif (self.args.search == 'blast'):
             ## BLAST all vs all output is stored in directory/base.blast_tbl
             try:
-                output = runObj.runblast()
+                output = runObj.runblast(args.evalue)
             except OSError:
                 print("\nUnable to perform BLAST sequence alignment.\n"
                       "Check the commands above for correctness.\n"
@@ -215,21 +222,9 @@ if (__name__ == '__main__'):
 
     print ("{} search type selected!".format(args.search))
 
-    if not (args.alignfile):
-        print("Do you want to run {} sequence alignment? y or n".format(args.search))
-        if (raw_input() == 'y'):
-            if not (args.exebin):
-                print("Run stopped\n"
-                      "No directory specified for sequence alignment\n"
-                      "Did you forget to use the -bin flag?")
-                sys.exit(0)
-            else:
-                runclust.sequencealignment()
-        else:
-            print("Run stopped\n"
-                  "Either run sequence alignment "
-                  "or use the -align flag to specify a {} output file".format(args.search))
-            sys.exit(0)
+    if (args.exebin):
+        print("Executing {} sequence alignment".format(args.search))
+        runclust.sequencealignment()
 
     print("Parsing output")
     scipymat = runclust.parseOutput()

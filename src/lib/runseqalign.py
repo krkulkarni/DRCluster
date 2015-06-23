@@ -52,7 +52,7 @@ class Align(object):
         return self._execute_commands(comm)
         ## Returns jackhmmer ouput
 
-    def runblast(self):
+    def runblast(self,evalue):
 
         ## This function accepts the path to the target fasta sequence and the fasta PDB database
         ## and creates a table of hits file (base.jackhmmer_tbl)
@@ -72,7 +72,8 @@ class Align(object):
 
         # Command to run all vs all BLAST
         comm1 = [ blastp, '-query', self.path,
-               '-db', db, '-outfmt', '6', '-out', results]
+               '-db', db, '-outfmt', '6', '-out', results,
+               '-evalue', evalue]
         print ' '.join(comm1)
 
         comm.append(comm0)
