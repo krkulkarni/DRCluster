@@ -73,7 +73,7 @@ class Align(object):
         # Command to run all vs all BLAST
         comm1 = [ blastp, '-query', self.path,
                '-db', db, '-outfmt', '6', '-out', results,
-               '-evalue', evalue]
+               '-evalue', str(evalue)]
         print ' '.join(comm1)
 
         comm.append(comm0)

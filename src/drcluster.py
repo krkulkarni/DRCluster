@@ -34,16 +34,32 @@ __author__ = "kulkarnik"
 
 class Algorithm(object):
 
-    def __init__(self,scipymat,pointslen,dim):
+    def __init__(self,scipymat,pointslen,dim,roadmap):
         self.scipymat = scipymat
         self.pointslen = pointslen
         self.dim = dim
+        if roadmap:
+            self.seed = self._normalize_seed(np.loadtxt(roadmap))
+        else:
+            self.seed = np.random.rand(self.pointslen,self.dim)
 
-    def svdsne(self,perp):
+    def _normalize_seed(self,roadmap):
+        mappoints, _ = roadmap.shape
+        if (mappoints == self.pointslen):
+            print("roadmap returned")
+            return roadmap
+
+        else:
+            print("added zeros to roadmap")
+            newpoints = self.pointslen - mappoints
+            newzeroseed = np.zeros((newpoints,self.dim),dtype=np.float64)
+            return np.concatenate((roadmap,newzeroseed))
+
+    def svdsne(self,perp,theta):
         print("Performing svdsne")
         tempred = min(self.pointslen/10,500)
         tempmatrix = mds_calc.svd(self.scipymat,tempred)
-        matrix = tsne.bh_sne(tempmatrix,perplexity=perp)
+        matrix = tsne.bh_sne(tempmatrix,self.seed,perplexity=perp,theta=theta)
         return matrix
 
 
@@ -160,11 +176,11 @@ class DRClusterRun(object):
         # Run the appropriate clustering algorithm
         # See lib/mds_calc.py for more details
         coordspath = "{}/{}_{}_coords.txt".format(self.args.directory,self.base,self.args.type)
-        alg = Algorithm(scipymat,int(len(self.points)),int(self.args.dimension))
+        alg = Algorithm(scipymat,int(len(self.points)),int(self.args.dimension),self.args.seed)
 
         if not (self.args.preclustered):
             if (self.args.type == "svdsne"):
-                matrix = alg.svdsne(int(self.args.perplexity))
+                matrix = alg.svdsne(int(self.args.perplexity),float(self.args.theta))
             elif (self.args.type == "mdsonly"):
                 matrix = alg.mdsonly()
             else:

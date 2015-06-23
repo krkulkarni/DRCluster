@@ -53,6 +53,13 @@ def arg_parser():
                             help="Choose clustering algorithm",
                             choices=['svdsne','mdsonly','sneonly'],default='svdsne')
 
+    paraParser.add_argument('-seed', '--seed',
+                            help="Path to roadmap matrix",
+                            default=None)
+    paraParser.add_argument('-theta', '--theta',
+                            help="Theta value for bh_tsne (Lower value is more accurate, 0 is true TSNE",
+                            default=0.5)
+
     paraParser.add_argument('-color','--color',
                             help="Choose coloring scheme: modelability, PFAM, or group",
                             choices=['pfam', 'mod', 'group'],default='mod')

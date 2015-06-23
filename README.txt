@@ -6,8 +6,8 @@ Clustering FASTA datasets using dimensionality reduction algorithms.
 
 ## Overview
 
-### BLAST/jackhmmer all vs. all sequence comparison
-- BLAST: Convert FASTA file to protein database and search using FASTA file as query
+### BLAST+/jackhmmer all vs. all sequence comparison
+- BLAST+: Convert FASTA file to protein database and search using FASTA file as query
 - jackhmmer: PSI-BLAST-like iterative search of a FASTA query against itself
 
 Results are stored in a abstracted pairwise, symmetric, similarity matrix.
@@ -39,7 +39,8 @@ scipy==0.15.1
 tsne==0.1.1
 ---------------------
 
-- Also, you must have a working installation of either BLAST or jackhmmer for all vs. all sequence alignment.
+- Also, you must have a working installation of either BLAST+ or jackhmmer for all vs. all sequence alignment.
+- Only BLAST+ will work, legacy BLAST will not work!
 
 
 ## Walkthrough for minimal usage
