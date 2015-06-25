@@ -34,8 +34,8 @@ def read_fasta(fastafile,annotated):
             for line in f:
                 if (line[0] == "#"):
                     continue
-                elif (line[0] == '>'):
-                    parts = line[1:].split(";")
+                elif (line.strip()[0] == '>'):
+                    parts = line.strip()[1:].split(";")
                     name = parts[0].strip().split()[0]
                     modcolor = _convertmodtocolor(parts[8].strip())
                     pfamnum, pfamdict, colornum = _checkpfam(parts[1].strip(),pfamdict,colornum)
@@ -48,19 +48,34 @@ def read_fasta(fastafile,annotated):
 
                     sequence = f.next()
                     newpoint.seq = sequence
-                    points[name] = newpoint
+                    if name not in points:
+                        points[name] = newpoint
+                    else:
+                        print("THIS POINT EXISTS: {}".format(name))
+                        print("Renaming to {}_1".format(name))
+                        name = "{}_1".format(name)
+                        points[name] = newpoint
         else:
-            for line in f:
-                if (line[0] == "#"):
+            for i, line in enumerate(f):
+                if (line.startswith("#")):
+                    print("Skipped {}th line".format(i))
                     continue
-                elif (line[0] == ">"):
+                elif (line.startswith(">")):
                     name = line[1:].strip().split(";")[0]
                     newpoint = AllPointInfo(line.strip(),name,index)
                     index += 1
 
                     sequence = f.next()
                     newpoint.seq = sequence
-                    points[name] = newpoint
+                    if name not in points:
+                        points[name] = newpoint
+                    else:
+                        print("THIS POINT EXISTS: {}".format(name))
+                        print("Renaming to {}_1".format(name))
+                        name = "{}_1".format(name)
+                        points[name] = newpoint
+                else:
+                    print("ADDRESS THIS ITS A WEIRD ISSUE\n\n\n")
 
     return points
 

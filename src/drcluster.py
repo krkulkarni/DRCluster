@@ -1,8 +1,9 @@
-#!/usr/bin/env python
+#!/usr/bin/env python -u
 
 import time
 import sys
 import os
+import csv
 import numpy as np
 from lib import updated_readargs, initrun, results_parser, mds_calc, tsne_calc, grouper, plotter, runseqalign
 from scipy import sparse
@@ -38,26 +39,36 @@ class Algorithm(object):
         self.scipymat = scipymat
         self.pointslen = pointslen
         self.dim = dim
+        dirname = os.path.dirname(os.path.realpath(__file__))
+        numpyfile = "{}/lib/seed.txt".format(dirname)
         if roadmap:
-            self.seed = self._normalize_seed(np.loadtxt(roadmap))
+            self.seed = self._normalize_seed(np.loadtxt(roadmap),numpyfile)
         else:
-            self.seed = np.random.rand(self.pointslen,self.dim)
+            self.seed = self._normalize_seed(np.genfromtxt(numpyfile,skip_footer=120000-self.pointslen))
 
-    def _normalize_seed(self,roadmap):
+    def _normalize_seed(self,roadmap,*args):
         mappoints, _ = roadmap.shape
         if (mappoints == self.pointslen):
-            print("roadmap returned")
+            print("Roadmap returned")
             return roadmap
 
-        else:
-            print("added zeros to roadmap")
+        elif (mappoints < self.pointslen):
+            print("Added points to roadmap")
             newpoints = self.pointslen - mappoints
-            newzeroseed = np.zeros((newpoints,self.dim),dtype=np.float64)
-            return np.concatenate((roadmap,newzeroseed))
+            newseed = np.genfromtxt(args[0],skip_header=mappoints,skip_footer=120000-self.pointslen)
+            #newzeroseed = np.zeros((newpoints,self.dim),dtype=np.float64)
+            try:
+                return np.concatenate((roadmap,newseed))
+            except ValueError:
+                # Only happens if newseed has one member
+                return np.concatenate((roadmap,[newseed]))
+        else:
+            return roadmap[:self.pointslen]
 
     def svdsne(self,perp,theta):
         print("Performing svdsne")
-        tempred = min(self.pointslen/10,500)
+        tempred = min(self.pointslen/10,50)
+        print("Reducing to {} dimensions with SVD".format(tempred))
         tempmatrix = mds_calc.svd(self.scipymat,tempred)
         matrix = tsne.bh_sne(tempmatrix,self.seed,perplexity=perp,theta=theta)
         return matrix
@@ -155,12 +166,16 @@ class DRClusterRun(object):
         # Parse either the jackhmmer or BLAST output
         matrixpath = "{}/sparsedata.txt".format(self.args.directory)
         if not (self.args.preparsed):
+            with open(self.args.alignfile) as f:
+                totaloutputlen = sum(1 for _ in f)
             tabParser, tabHandle = initrun.open_file(self.args.alignfile)
             row,col,data = results_parser.next_line_original_format(self.args.value,
                                                                     tabParser,tabHandle,
-                                                                    self.points,self.args.search)
+                                                                    self.points,self.args.search,
+                                                                    totaloutputlen)
             savemat = np.vstack((row,col,data))
             np.savetxt(matrixpath,savemat)
+            print("Generating sparse matrix from data")
             scipymat = sparse.coo_matrix((data,(row,col)),shape=(len(self.points),len(self.points)))
             return scipymat
 
@@ -169,6 +184,7 @@ class DRClusterRun(object):
             row = savemat[0]
             col = savemat[1]
             data = savemat[2]
+            print("Generating sparse matrix from data")
             scipymat = sparse.coo_matrix((data,(row,col)),shape=(len(self.points),len(self.points)))
             return scipymat
 

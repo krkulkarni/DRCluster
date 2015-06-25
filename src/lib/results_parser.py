@@ -1,6 +1,7 @@
 __author__ = 'kulkarnik'
 import math
 from scipy import sparse
+import sys, time
 
 ##Read each line in tab-delimited file and store important variables
 
@@ -12,11 +13,14 @@ from scipy import sparse
 ## eValue   --> e-value of match
 ## bitScore --> bit score of match
 ##
-def next_line_original_format(flag, parser, handle,points,search):
+def next_line_original_format(flag, parser, handle,points,search,totaloutputlen):
     ##if the bit flag is on, run addtoBitMatrix
     row = []
     col = []
     data = []
+    linenum = 0
+    print("Parsing line {} of {}".format(linenum,totaloutputlen))
+    t0 = time.time()
 
     if (flag == 'b'):
         try:
@@ -30,6 +34,11 @@ def next_line_original_format(flag, parser, handle,points,search):
 
                     ##REMEMBER TO ADD FLAG OPTION FOR EITHER EVALUE OR BITSCORE MATRIX
                     row, col, data = add_to_bit_matrix(qSeqId,sSeqId,bitscore,queryLen,points,row,col,data)
+                    linenum += 1
+                    if (linenum%50000 == 0):
+                        t1=time.time()-t0
+                        t0=time.time()
+                        print ("Parsing line {} of {} (50k lines in {} seconds)".format(linenum,totaloutputlen,t1))
 
             elif (search=='hmmer'):
                 while (True):
@@ -43,10 +52,23 @@ def next_line_original_format(flag, parser, handle,points,search):
                     ##REMEMBER TO ADD FLAG OPTION FOR EITHER EVALUE OR BITSCORE MATRIX
                     print("Incorrect Query Length being used. Don't use bitscore with hmmer output.")
                     row, col, data = add_to_bit_matrix(qSeqId,sSeqId,bitscore,100,points,row,col,data)
+                    linenum += 1
+                    if (linenum%50000 == 0):
+                        t1=time.time()-t0
+                        t0=time.time()
+                        print ("Parsing line {} of {} (50k lines in {} seconds)".format(linenum,totaloutputlen,t1))
 
         except StopIteration:
+            print("Finished parsing {} lines".format(totaloutputlen))
             handle.close()
             return row,col,data
+
+        except IndexError as err:
+            handle.close()
+            print err
+            print("Align file is incorrect! Are you sure you have the correct mode set?\n"
+                  "Current mode is {}".format(search))
+            sys.exit(1)
 
     ##otherwise run add to Ematrix
     else:
@@ -60,6 +82,11 @@ def next_line_original_format(flag, parser, handle,points,search):
 
                     ##REMEMBER TO ADD FLAG OPTION FOR EITHER EVALUE OR BITSCORE MATRIX
                     row, col, data = add_to_e_matrix(qSeqId,sSeqId,eValue,points,row,col,data)
+                    linenum += 1
+                    if (linenum%50000 == 0):
+                        t1=time.time()-t0
+                        t0=time.time()
+                        print ("Parsing line {} of {} (50k lines in {} seconds)".format(linenum,totaloutputlen,t1))
 
             elif (search=='hmmer'):
                 while (True):
@@ -72,21 +99,38 @@ def next_line_original_format(flag, parser, handle,points,search):
 
                     ##REMEMBER TO ADD FLAG OPTION FOR EITHER EVALUE OR BITSCORE MATRIX
                     row, col, data = add_to_e_matrix(qSeqId,sSeqId,eValue,points,row,col,data)
+                    linenum += 1
+                    if (linenum%50000 == 0):
+                        t1=time.time()-t0
+                        t0=time.time()
+                        print ("Parsing line {} of {} (50k lines in {} seconds)".format(linenum,totaloutputlen,t1))
 
         except StopIteration:
+            print("Finished parsing {} of {} lines".format(linenum,totaloutputlen))
             handle.close()
             return row,col,data
 
+        except IndexError as err:
+            handle.close()
+            print err
+            print("Align file is incorrect! Are you sure you have the correct mode set?\n"
+                  "Current mode is {}".format(search))
+            sys.exit(1)
 
 
 ##add scaled score to distance matrix
 def add_to_bit_matrix(query,match,bitscore,querylen,points,row,col,data):
 
     ##look up query index and match index
+    try:
+        query_index = points[query].index
+        match_index = points[match].index
 
-    query_index = points[query].index
-    match_index = points[match].index
-
+    except KeyError as err:
+        print err
+        print("The protein name in alignment output life was not found!\n"
+              "Are you sure that the FASTA file corresponds to the alignment file?")
+        sys.exit(1)
     # query_index = names.index(query)
     # match_index = names.index(match)
 
@@ -116,10 +160,15 @@ def convert_bit_score(bitscore,querylength):
 ##WORK ON THE SCALED SCORE FOR E VALUES
 def add_to_e_matrix(query,match,e,points,row,col,data):
     ##look up query index and match index
+    try:
+        query_index = points[query].index
+        match_index = points[match].index
 
-    query_index = points[query].index
-    match_index = points[match].index
-
+    except KeyError as err:
+        print err
+        print("The protein name in alignment output life was not found!\n"
+              "Are you sure that the FASTA file corresponds to the alignment file?")
+        sys.exit(1)
     ##convert bit score into a scaled score
     e_scaled_score = convert_e_score(e)
 
