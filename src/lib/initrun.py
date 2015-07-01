@@ -95,13 +95,3 @@ def _convertmodtocolor(mod):
     elif mod == 'notmod':
         return 3
 
-##Creates handle for results.out file
-def open_file(filename):
-    tabHandle = open(filename,"rb")
-    tabParser = csv.reader(tabHandle, delimiter='\t')
-
-    return tabParser, tabHandle
-
-# Retrieve matrix from path
-def get_matrix(matrixpath):
-    return np.loadtxt(matrixpath)

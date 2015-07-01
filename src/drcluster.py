@@ -5,99 +5,13 @@ import sys
 import os
 import csv
 import numpy as np
-from lib import updated_readargs, initrun, results_parser, mds_calc, tsne_calc, grouper, plotter, runseqalign
+from lib import updated_readargs, initrun, results_parser, grouper, plotter, runseqalign, algorithms
 from scipy import sparse
 import tsne
 #import json
 #from lib import jsonconv
 
 __author__ = "kulkarnik"
-
-## The Algorithm class holds the three methods of dimensionality reduction.
-
-## SVD - tSNE hybrid: svdsne()
-## First performs singular value decomposition directly on sparse matrix
-## to reduce the noise of dataset.
-## Then, runs t-SNE with Barnes-Hut approximation on intermediate dataset
-## to reduce to coordinate embedding
-
-## Euclidean Multidimensional Scaling: mdsonly()
-## Use with caution! It fails on large datasets
-## Convert sparse matrix to dense matrix
-## and perform linear dimensionality reduction
-## treating similarity values as Euclidean distances
-
-## t-SNE only: sneonly()
-## Use with caution! This method fails under most conditions,
-## due to the organization of the sparse similarity matrix
-## Runs t-SNE algorithm directly on full matrix, without intermediate reduction,
-## and without Barnes-Hut approximation
-
-class Algorithm(object):
-
-    def __init__(self,scipymat,pointslen,dim,roadmap):
-        self.scipymat = scipymat
-        self.pointslen = pointslen
-        self.dim = dim
-        dirname = os.path.dirname(os.path.realpath(__file__))
-        numpyfile = "{}/lib/seed.txt".format(dirname)
-        if roadmap:
-            self.seed = self._normalize_seed(np.loadtxt(roadmap),numpyfile)
-        else:
-            self.seed = self._normalize_seed(np.genfromtxt(numpyfile,skip_footer=120000-self.pointslen))
-
-    def _normalize_seed(self,roadmap,*args):
-        mappoints, _ = roadmap.shape
-        if (mappoints == self.pointslen):
-            print("Roadmap returned")
-            return roadmap
-
-        elif (mappoints < self.pointslen):
-            print("Added points to roadmap")
-            newpoints = self.pointslen - mappoints
-            newseed = np.genfromtxt(args[0],skip_header=mappoints,skip_footer=120000-self.pointslen)
-            #newzeroseed = np.zeros((newpoints,self.dim),dtype=np.float64)
-            try:
-                return np.concatenate((roadmap,newseed))
-            except ValueError:
-                # Only happens if newseed has one member
-                return np.concatenate((roadmap,[newseed]))
-        else:
-            return roadmap[:self.pointslen]
-
-    def svdsne(self,perp,theta):
-        print("Performing svdsne")
-        tempred = min(self.pointslen/10,50)
-        print("Reducing to {} dimensions with SVD".format(tempred))
-        tempmatrix = mds_calc.svd(self.scipymat,tempred)
-        matrix = tsne.bh_sne(tempmatrix,self.seed,perplexity=perp,theta=theta)
-        return matrix
-
-
-    def mdsonly(self,*args):
-        print("Performing mdsonly")
-        if (self.pointslen > 2000):
-            print "Too many proteins to perform MDS directly"
-            sys.exit(2)
-        matrix = mds_calc.metric_mds(self.scipymat.toarray(),self.dim)
-        return matrix
-
-
-    def sneonly(self,reinit,directory,**kwargs):
-        print("Performing sneonly")
-        inity = "{}/inity.npy".format(directory)
-        if (reinit):
-            try:
-                os.remove(inity)
-            except OSError:
-                print "No initial inity file"
-        if (self.pointslen > 2000):
-            print "Too many proteins to perform t-SNE directly"
-            sys.exit(2)
-        matrix = tsne_calc.tsne(inity,False,scipymat.toarray(),
-                                no_dims=self.dim,
-                                initial_dims=self.pointslen)
-        return matrix
 
 class DRClusterRun(object):
 
@@ -168,9 +82,9 @@ class DRClusterRun(object):
         if not (self.args.preparsed):
             with open(self.args.alignfile) as f:
                 totaloutputlen = sum(1 for _ in f)
-            tabParser, tabHandle = initrun.open_file(self.args.alignfile)
-            row,col,data = results_parser.next_line_original_format(self.args.value,
-                                                                    tabParser,tabHandle,
+            # tabParser, tabHandle = initrun.open_file(self.args.alignfile)
+            row,col,data = results_parser.next_line_original_format(self.args.alignfile,
+                                                                    self.args.value,
                                                                     self.points,self.args.search,
                                                                     totaloutputlen)
             savemat = np.vstack((row,col,data))
@@ -180,7 +94,7 @@ class DRClusterRun(object):
             return scipymat
 
         else:
-            savemat = initrun.get_matrix(matrixpath)
+            savemat = np.loadtxt(matrixpath)
             row = savemat[0]
             col = savemat[1]
             data = savemat[2]
@@ -192,7 +106,7 @@ class DRClusterRun(object):
         # Run the appropriate clustering algorithm
         # See lib/mds_calc.py for more details
         coordspath = "{}/{}_{}_coords.txt".format(self.args.directory,self.base,self.args.type)
-        alg = Algorithm(scipymat,int(len(self.points)),int(self.args.dimension),self.args.seed)
+        alg = algorithms.Algorithm(scipymat,self.points,int(self.args.dimension),self.args.seed)
 
         if not (self.args.preclustered):
             if (self.args.type == "svdsne"):
