@@ -72,10 +72,6 @@ def arg_parser():
                             help="Clustering algorithm has already been applied",
                             action="store_true")
 
-    paraParser.add_argument('-group', '--group',
-                            type=float,
-                            help="Group into modeling families")
-
     ## Choose this argument to plot the coordinates in a PyPlot with matplotlib
     paraParser.add_argument('-plot','--plot',
                             help="Plot coordinates with matplotlib",

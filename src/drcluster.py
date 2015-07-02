@@ -137,7 +137,9 @@ class DRClusterRun(object):
             for name, point in self.points.iteritems():
                 colors[point.index] = point.modcolor
         elif (self.args.color == 'group'):
+            grouppath = "{}/groups.txt".format(self.args.directory)
             colors = grouper.dbscan(matrix)
+            grouper.savegroups(grouppath,self.points,colors)
             # colors = np.loadtxt(grouppath)
         else:
             print "Some error occurred"

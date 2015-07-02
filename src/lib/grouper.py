@@ -7,6 +7,25 @@ def dbscan(matrix):
     labels = db.labels_
     return labels
 
+def savegroups(grouppath,points,colors):
+
+    groupdict = {}
+
+    for index, groupnum in enumerate(colors):
+        pointslist = groupdict.get(groupnum, [])
+        for name, point in points.iteritems():
+            if (point.index == index):
+                pointslist.append(point.name)
+                break
+        groupdict[groupnum] = pointslist
+
+    with open(grouppath, 'wb') as f:
+        for group, namelist in groupdict.iteritems():
+            f.write("Cluster {}:\n".format(int(group)))
+            for name in namelist:
+                f.write("{}\n".format(name))
+            f.write("\n")
+
 class Object(object):
     def __init__(self,id,x,y):
         self.id = id
