@@ -26,83 +26,74 @@ __author__ = 'kulkarnik'
 
 class Algorithm(object):
 
-    def __init__(self,scipymat,points,dim,roadmap):
+    def __init__(self,scipymat,points,dim):
         self.scipymat = scipymat
         self.points = points
         self.pointslen = len(points)
         self.dim = dim
-        dirname = os.path.dirname(os.path.realpath(__file__))
         self.seed = self._generate_seed_matrix()
-        # numpyfile = "{}/seed.txt".format(dirname)
-        # if roadmap:
-        #     self.seed = self._normalize_seed(np.loadtxt(roadmap),numpyfile)
-        # else:
-        #     self.seed = self._normalize_seed(np.genfromtxt(numpyfile,skip_footer=120000-self.pointslen))
 
-    def coordsgen(self,points):
+
+    def _coordsgen(self,points):
         amino_acids = {
-            "G": -.7444439610016066,
-            "A": -.8120238054672788,
-            "V": -.6814501991655911,
-            "L": -.4655948851103902,
-            "I": -.522471902925321,
-            "P": -.9733493722846006,
+            "G": -.7444439610016066, #
+            "A": -.8120238054672788, # ALL
+            "V": -.6814501991655911, # NONPOLAR
+            "L": -.4655948851103902, # RESIDUES
+            "I": -.522471902925321,  # (-1.0,-0.4)
+            "P": -.9733493722846006, #
 
-            "F": -.12813674753375167,
-            "Y": -.2831025840191209,
-            "W": -.2060643234971105,
+            "F": -.12813674753375167,# ALL AROMATIC
+            "Y": -.2831025840191209, # RESIDUES
+            "W": -.2060643234971105, # (-0.4,-0.1)
 
-            "S": .22299402164794557,
-            "T": .3971822974996705,
-            "C": .06914052935419317,
-            "N": .33157208503360835,
-            "M": .4315294239386928,
-            "Q": .19041624661608026,
+            "S": .22299402164794557, #
+            "T": .3971822974996705,  # ALL POLAR,
+            "C": .06914052935419317, # UNCHARGED
+            "N": .33157208503360835, # RESIDUES
+            "M": .4315294239386928,  # (-0.1,0.5)
+            "Q": .19041624661608026, #
 
-            "K": .6800921873765579,
-            "R": .7001202297117273,
-            "H": .7478338718290908,
+            "K": .6800921873765579,  # ALL POLAR,
+            "R": .7001202297117273,  # POSITIVE RESIDUES
+            "H": .7478338718290908,  # (0.5,0.8)
 
-            "D": .8803319774576138,
-            "E": .9738805050045272
+            "D": .8803319774576138,  # ALL POLAR, NEGATIVE
+            "E": .9738805050045272   # RESIDUES
+                                     # (0.8,1.0)
         }
 
-        for key, point in points.iteritems():
-            yield sum(amino_acids[aa] for aa in point.seq[0:10]), \
-                  sum(amino_acids[aa] for aa in point.seq[-10:-1])
+        for i, (key, point) in enumerate(points.iteritems(),start=1):
+            yield i,\
+                  sum(amino_acids[aa] for aa in point.seq[0:10]), \
+                  sum(amino_acids[aa] for aa in point.seq[-10:-1]), \
+                  sum(amino_acids[aa] for aa in point.seq[0:20:2])
 
     def _generate_seed_matrix(self):
         seed = []
-        for x,y in self.coordsgen(self.points):
-            seed.append([x,y])
+        print("Calculating initial seeding matrix")
+        print("Calculating coordinates for point {} of {}".format("0",self.pointslen))
+        for i,x,y,z in self._coordsgen(self.points):
+            if (self.dim == 2):
+                seed.append([x,y])
+            elif (self.dim == 3):
+                seed.append([x,y,z])
+            else:
+                print("Invalid dimensionality! Strange error")
+                raise NotImplementedError
+            if (i%1000 == 0):
+                print("Calculating coordinates for point {} of {}".format(i,self.pointslen))
         return np.array(seed)
 
-    # def _normalize_seed(self,roadmap,*args):
-    #     mappoints, _ = roadmap.shape
-    #     if (mappoints == self.pointslen):
-    #         print("Roadmap returned")
-    #         return roadmap
-    #
-    #     elif (mappoints < self.pointslen):
-    #         print("Added points to roadmap")
-    #         newpoints = self.pointslen - mappoints
-    #         newseed = np.genfromtxt(args[0],skip_header=mappoints,skip_footer=120000-self.pointslen)
-    #         #newzeroseed = np.zeros((newpoints,self.dim),dtype=np.float64)
-    #         try:
-    #             return np.concatenate((roadmap,newseed))
-    #         except ValueError:
-    #             # Only happens if newseed has one member
-    #             return np.concatenate((roadmap,[newseed]))
-    #     else:
-    #         # If mappoints > self.pointslen
-    #         return roadmap[:self.pointslen]
 
     def svdsne(self,perp,theta):
         print("Performing svdsne")
         tempred = min(self.pointslen/10,50)
         print("Reducing to {} dimensions with SVD".format(tempred))
         tempmatrix = mds_calc.svd(self.scipymat,tempred)
-        matrix = tsne.bh_sne(tempmatrix,self.seed,perplexity=perp,theta=theta)
+        matrix = tsne.bh_sne(tempmatrix,self.seed,
+                             d=self.dim,perplexity=perp,
+                             theta=theta,pca_d=None)
         return matrix
 
 

@@ -20,12 +20,11 @@ def next_line_original_format(alignfile, flag, points,search,totaloutputlen):
     row = []
     col = []
     data = []
-    linenum = 0
-    print("Parsing line {} of {}".format(linenum,totaloutputlen))
+    print("Parsing line {} of {}".format("0",totaloutputlen))
     t0 = time.time()
     parser = csv.reader(open(alignfile,'rb'),delimiter='\t')
 
-    for line in parser:
+    for i, line in enumerate(parser,start=1):
         if (search == 'blast'):
             qSeqId = line[0].split(";")[0]
             sSeqId = line[1].split(";")[0]
@@ -47,11 +46,10 @@ def next_line_original_format(alignfile, flag, points,search,totaloutputlen):
             row, col, data = add_to_bit_matrix(qSeqId,sSeqId,bitscore,queryLen,points,row,col,data)
         elif (flag == 'e'):
             row, col, data = add_to_e_matrix(qSeqId,sSeqId,eValue,points,row,col,data)
-        linenum += 1
-        if (linenum%50000 == 0):
+        if (i%50000 == 0):
             t1=time.time()-t0
             t0=time.time()
-            print ("Parsing line {} of {} (50k lines in {} seconds)".format(linenum,totaloutputlen,t1))
+            print ("Parsing line {} of {} (50k lines in {} seconds)".format(i,totaloutputlen,t1))
 
     return row, col, data
 

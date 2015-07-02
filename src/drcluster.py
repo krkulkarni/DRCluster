@@ -12,6 +12,7 @@ import tsne
 #from lib import jsonconv
 
 __author__ = "kulkarnik"
+__version__ = "0.9.1"
 
 class DRClusterRun(object):
 
@@ -88,6 +89,7 @@ class DRClusterRun(object):
                                                                     self.points,self.args.search,
                                                                     totaloutputlen)
             savemat = np.vstack((row,col,data))
+            print("Saving matrix data to {}".format(matrixpath))
             np.savetxt(matrixpath,savemat)
             print("Generating sparse matrix from data")
             scipymat = sparse.coo_matrix((data,(row,col)),shape=(len(self.points),len(self.points)))
@@ -106,7 +108,7 @@ class DRClusterRun(object):
         # Run the appropriate clustering algorithm
         # See lib/mds_calc.py for more details
         coordspath = "{}/{}_{}_coords.txt".format(self.args.directory,self.base,self.args.type)
-        alg = algorithms.Algorithm(scipymat,self.points,int(self.args.dimension),self.args.seed)
+        alg = algorithms.Algorithm(scipymat,self.points,int(self.args.dimension))
 
         if not (self.args.preclustered):
             if (self.args.type == "svdsne"):
@@ -159,7 +161,7 @@ class DRClusterRun(object):
 ##RUN THE CODE
 if (__name__ == '__main__'):
     t0 = time.time()
-    print("Running script")
+    print("Running DRCluster (version {})".format(__version__))
 
     args = updated_readargs.arg_parser()
 
