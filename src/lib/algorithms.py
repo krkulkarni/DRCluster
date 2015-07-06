@@ -1,6 +1,10 @@
 import os, sys
 import numpy as np
+<<<<<<< HEAD
 import tsne.tsne as tsne
+=======
+import tsne
+>>>>>>> 5776ea233f4e5aabdef9c4aadacfa99983bee44b
 from lib import mds_calc, tsne_calc
 
 __author__ = 'kulkarnik'
