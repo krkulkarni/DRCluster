@@ -1,79 +1,60 @@
-# DRCLUSTER
-### Dimensionality Reduction Cluster
+Python-TSNE
+===========
 
-Clustering FASTA datasets using dimensionality reduction algorithms.
+Python library containing T-SNE algorithms.
 
-## Overview
+Algorithms
+----------
 
-### BLAST/jackhmmer all vs. all sequence comparison
-- BLAST: Convert FASTA file to protein database and search using FASTA file as query
-- jackhmmer: PSI-BLAST-like iterative search of a FASTA query against itself
+### Barnes-Hut-SNE
 
-Results are stored in a abstracted pairwise, symmetric, similarity matrix.
+A python ([cython](http://www.cython.org)) wrapper for [Barnes-Hut-SNE](http://homepage.tudelft.nl/19j49/t-SNE.html) aka fast-tsne.
 
+I basicly took [osdf code](https://github.com/osdf/py_bh_tsne) and made it pip compilant.
 
-### SVD/t-SNE hybrid dimensionality reduction
+The wrapper was successfully tested on OSX (10.6/10.7), Ubuntu (11.04) and Arch Linux.
 
-Converts high dimensional similarity matrix into low-dimensional embedding while maintaining local manifold structure.
+Requirements
+------------
 
-Embedding is stored as a two-dimensional numpy array.
+* [numpy](numpy.scipy.org)>=1.7.1
+* [scipy](http://www.scipy.org/)>=0.12.0
+* [cython](cython.org)>=0.19.1
+* [cblas](http://www.netlib.org/blas/) or [openblas](https://github.com/xianyi/OpenBLAS). Tested version is v0.2.5 and v0.2.6 (not necessary for OSX).
 
-### Plotting
+Installation
+------------
 
-Uses matplotlib to plot embedding with basic annotation tools.
+You can install the package from [PyPI](https://pypi.python.org/pypi):
 
-
-## Installation
-
-Ensure that the file structure for the src/ folder is as follows: (It should already be correct!)
-
-- src
-	- pyclust.py
-	- lib/
-		- annotation.py
-		- grouper.py
-		- initrun.py
-		- jsonconv.py
-		- mds_calc.py
-		- plotter.py
-		- readargs.py
-		- results_parser.py
-		- tsne/
-		- tsne_calc.py
-
-### Pip installation
-- We recommend you set up a virtual environment and run the command ```pip install -r requirements.txt```
-- Then run ```pip install tsne```. (The setup for tsne requires the numpy module)
-
-- Alternatively, install all the packages in requirements.txt manually.
-
-
-Requirements.txt contents:
 ```
-Cython==0.22
-matplotlib==1.4.3
-scikit-learn==0.16.1
-scipy==0.15.1
-tsne==0.1.1
+pip install tsne
 ```
 
-- Also, you must have a working installation of either BLAST or jackhmmer for all vs. all sequence alignment.
+Or directly from the Github repository:
 
-## Walkthrough for usage
+```
+pip install git+https://github.com/danielfrg/tsne.git
+```
 
-Create a folder for output storage. The name of the folder *must* be the name of the the FASTA file. FASTA file name *must* be in the format **example.fas**
-- ```mkdir proteins``` for FASTA file *proteins.fas*
+Usage
+-----
 
-Move FASTA file to this folder and create a *temp/* directory.
-- ```mv proteins.fas proteins/```
-- ```mkdir temp/```
+Basic usage:
 
-Run all vs. all sequence comparison. BLAST output must be in table format under the name *results.out*. Jackhmmer output must be in table format under the name *tbl.hits*.
-- ```jackhmmer --tblout tbl.hits proteins.fas proteins.fas```
+```
+from tsne import bh_sne
+X_2d = bh_sne(X)
+```
 
-Navigate run pyclust.py from src/ directory with the following flags:
-- ```-dir proteins``` name of data folder (e.g. proteins)
-- ```-parse``` parse into similarity matrix
-- ```-cluster``` cluster using SVD/t-SNE
-- ```-plot``` plot using Matplotlib
-- E.g. ```python /Path/to/src/pyclust.py -dir proteins -parse -cluster -plot```
+### Examples
+
+* [Iris](http://nbviewer.ipython.org/urls/raw.github.com/danielfrg/py_tsne/master/examples/iris.ipynb)
+* [MNIST](http://nbviewer.ipython.org/urls/raw.github.com/danielfrg/py_tsne/master/examples/mnist.ipynb)
+* [word2vec on presidential speeches](https://github.com/prateekpg2455/U.S-Presidential-Speeches) via [@prateekpg2455](https://github.com/prateekpg2455)
+
+More Information
+----------------
+
+See *Barnes-Hut-SNE* (2013), L.J.P. van der Maaten. It is available on [arxiv](http://arxiv.org/abs/1301.3342).
+

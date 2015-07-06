@@ -11,7 +11,10 @@ import unittest
 
 class AllPointInfo():
 
-    def __init__(self, line, name, mod, modcolor, pfamnum, pfam, index):
+    #def __init__(self, line, name, mod, modcolor, pfamnum, pfam, index):
+    def __init__(self,line,name,index,
+                 mod='mod',modcolor=2,
+                 pfamnum=1,pfam='No fam'):
         self.line = line
         self.name = name
         self.seq = None
@@ -21,28 +24,64 @@ class AllPointInfo():
         self.pfam = pfam
         self.index = index
 
-def read_fasta(fastafile):
+def read_fasta(fastafile,annotated):
     pfamdict = dict()
     colornum = 0
     points = OrderedDict()
     with open(fastafile) as f:
         index = 0
-        for line in f:
-            if (line[0] == "#"):
-                continue
-            elif (line[0] == '>'):
-                parts = line[1:].split(";")
-                name = parts[0].strip().split()[0]
-                modcolor = _convertmodtocolor(parts[8].strip())
-                pfamnum, pfamdict, colornum = _checkpfam(parts[1].strip(),pfamdict,colornum)
-                # create a new point
-                #                      \full line   \name\ modelability  \mod color\ pfamnum\ pfam
-                newpoint = AllPointInfo(line.strip(),name,parts[8].strip(),modcolor,pfamnum, parts[1].strip(),index)
-                index = index+1
+        if (annotated):
+            for line in f:
+                if (line[0] == "#"):
+                    continue
+                elif (line.strip()[0] == '>'):
+                    parts = line.strip()[1:].split(";")
+                    name = parts[0].strip().split()[0]
+                    modcolor = _convertmodtocolor(parts[8].strip())
+                    pfamnum, pfamdict, colornum = _checkpfam(parts[1].strip(),pfamdict,colornum)
+                    # create a new point
+                    #                      \full line   \name\ modelability  \mod color\ pfamnum\ pfam
+                    newpoint = AllPointInfo(line.strip(),name, index,
+                                            mod=parts[8].strip(),modcolor=modcolor,
+                                            pfamnum=pfamnum, pfam=parts[1].strip())
+                    index += 1
 
-                sequence = f.next()
-                newpoint.seq = sequence
-                points[name] = newpoint
+                    sequence = f.next()
+                    newpoint.seq = sequence
+                    if name not in points:
+                        points[name] = newpoint
+                    else:
+                        print("THIS POINT EXISTS: {}".format(name))
+                        num = 1
+                        while (name in points):
+                            name = "{}_{}".format(name,num)
+                            num+=1
+                        print("Renaming to {}".format(name))
+                        points[name] = newpoint
+        else:
+            for i, line in enumerate(f):
+                if (line.startswith("#")):
+                    print("Skipped {}th line".format(i))
+                    continue
+                elif (line.startswith(">")):
+                    name = line[1:].strip().split(";")[0]
+                    newpoint = AllPointInfo(line.strip(),name,index)
+                    index += 1
+
+                    sequence = f.next()
+                    newpoint.seq = sequence
+                    if name not in points:
+                        points[name] = newpoint
+                    else:
+                        print("THIS POINT EXISTS: {}".format(name))
+                        num = 1
+                        while (name in points):
+                            name = "{}_{}".format(name,num)
+                            num+=1
+                        print("Renaming to {}".format(name))
+                        points[name] = newpoint
+                else:
+                    print("ADDRESS THIS ITS A WEIRD ISSUE\n\n\n")
 
     return points
 
@@ -62,37 +101,3 @@ def _convertmodtocolor(mod):
     elif mod == 'notmod':
         return 3
 
-##Creates handle for results.out file
-def open_file(filename):
-    tabHandle = open(filename,"rb")
-    tabParser = csv.reader(tabHandle, delimiter='\t')
-
-    return tabParser, tabHandle
-
-
-##Create the distance matrix
-##Initialize with 4 (the farthest possible value)
-def create_matrix(flag,points,matrixpath):
-    f = h5py.File(matrixpath,"w")
-    if (flag == 'b'):
-        dset = f.create_dataset("dataset",shape=(len(points),len(points)),fillvalue=4)
-    elif (flag == 'e'):
-        dset = f.create_dataset("dataset",shape=(len(points),len(points)),fillvalue=0)
-    return dset, f
-
-def get_matrix(matrixpath):
-    return np.loadtxt(matrixpath)
-
-# def run_blast_tab(queryname,dbname,outfile,fmt,dbsize,ecutoff):
-#     blastP = NcbiblastpCommandline(query=queryname,
-#                                    db=dbname,
-#                                    out=outfile,
-#                                    outfmt=fmt,
-#                                    #dbsize=dbsize,
-#                                    #searchsp=10000
-#                                    )
-#
-#     ##Run blastp locally and store results in results.out
-#     blastP()
-
-##
