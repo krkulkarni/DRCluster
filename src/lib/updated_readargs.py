@@ -41,7 +41,7 @@ def arg_parser():
     ## graph the protein clusters
     paraParser.add_argument('-dim','--dimension',
                             help="Choose how many dimensions to use",
-                            choices=['2','3'], default='2')
+                            choices=['2','3','4'], default='2')
 
     ## This argument chooses the type of clustering algorithm to use
     ## The choices are:

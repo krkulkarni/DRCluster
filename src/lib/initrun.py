@@ -52,8 +52,11 @@ def read_fasta(fastafile,annotated):
                         points[name] = newpoint
                     else:
                         print("THIS POINT EXISTS: {}".format(name))
-                        print("Renaming to {}_1".format(name))
-                        name = "{}_1".format(name)
+                        num = 1
+                        while (name in points):
+                            name = "{}_{}".format(name,num)
+                            num+=1
+                        print("Renaming to {}".format(name))
                         points[name] = newpoint
         else:
             for i, line in enumerate(f):
@@ -71,8 +74,11 @@ def read_fasta(fastafile,annotated):
                         points[name] = newpoint
                     else:
                         print("THIS POINT EXISTS: {}".format(name))
-                        print("Renaming to {}_1".format(name))
-                        name = "{}_1".format(name)
+                        num = 1
+                        while (name in points):
+                            name = "{}_{}".format(name,num)
+                            num+=1
+                        print("Renaming to {}".format(name))
                         points[name] = newpoint
                 else:
                     print("ADDRESS THIS ITS A WEIRD ISSUE\n\n\n")

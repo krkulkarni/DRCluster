@@ -78,6 +78,8 @@ class Algorithm(object):
                 seed.append([x,y])
             elif (self.dim == 3):
                 seed.append([x,y,z])
+            elif (self.dim == 4):
+                seed.append([x,y,z,0])
             else:
                 print("Invalid dimensionality! Strange error")
                 raise NotImplementedError
@@ -88,7 +90,7 @@ class Algorithm(object):
 
     def svdsne(self,perp,theta):
         print("Performing svdsne")
-        tempred = min(self.pointslen/10,50)
+        tempred = min(self.pointslen/5,200)
         print("Reducing to {} dimensions with SVD".format(tempred))
         tempmatrix = mds_calc.svd(self.scipymat,tempred)
         matrix = tsne.bh_sne(tempmatrix,self.seed,

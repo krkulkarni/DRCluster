@@ -12,7 +12,7 @@ import tsne
 #from lib import jsonconv
 
 __author__ = "kulkarnik"
-__version__ = "0.9.1"
+__version__ = "0.9.2"
 
 class DRClusterRun(object):
 
@@ -107,7 +107,9 @@ class DRClusterRun(object):
     def runClustering(self,scipymat):
         # Run the appropriate clustering algorithm
         # See lib/mds_calc.py for more details
-        coordspath = "{}/{}_{}_coords.txt".format(self.args.directory,self.base,self.args.type)
+        coordspath = "{}/{}_{}d_{}_coords.txt".format(self.args.directory,
+                                                      self.base,self.args.dimension,
+                                                      self.args.type)
         alg = algorithms.Algorithm(scipymat,self.points,int(self.args.dimension))
 
         if not (self.args.preclustered):
@@ -117,6 +119,17 @@ class DRClusterRun(object):
                 matrix = alg.mdsonly()
             else:
                 matrix = alg.sneonly(self.args.reinitialize,self.args.directory)
+
+            fastacoords = "{}/{}_{}d_{}_fastacoords.txt".format(self.args.directory,
+                                                                self.base,self.args.dimension,
+                                                                self.args.type)
+            with open(fastacoords, 'wb') as f:
+                for _, point in self.points.iteritems():
+                    f.write("{}\t".format(point.line[1:]))
+                    for coord in matrix[point.index]:
+                        f.write("{}\t".format(coord))
+                    f.write("\n")
+
             np.savetxt(coordspath,matrix)
 
         else:
