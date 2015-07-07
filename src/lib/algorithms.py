@@ -1,9 +1,10 @@
 import os
 import sys
-
+sys.path.append("../../lib/tsne/")
 import numpy as np
-import bhtsne.tsne as tsne
-from lib import mds_calc, tsne_calc
+import tsne
+
+import mds_calc, tsne_calc
 
 __author__ = 'kulkarnik'
 ## The Algorithm class holds the three methods of dimensionality reduction.

@@ -7,6 +7,7 @@ import csv
 import numpy as np
 from lib import updated_readargs, initrun, results_parser, grouper, plotter, runseqalign, algorithms
 from scipy import sparse
+sys.path.append("lib/tsne/")
 #import json
 #from lib import jsonconv
 
