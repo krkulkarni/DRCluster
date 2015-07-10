@@ -5,7 +5,7 @@ cimport cython
 cdef extern from "tsne.h":
     cdef cppclass TSNE:
         TSNE()
-        void run(double* X, int N, int D, double* Y, int no_dims, double perplexity, double theta)
+        void run(double* X, int N, int D, double* Y, int no_dims, double perplexity, double theta, int maxiter)
 
 
 cdef class BH_SNE:
@@ -19,9 +19,9 @@ cdef class BH_SNE:
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
-    def run(self, X, N, D, d, perplexity, theta, seed):
+    def run(self, X, N, D, d, perplexity, theta, seed, maxiter):
         cdef np.ndarray[np.float64_t, ndim=2, mode='c'] _X = np.ascontiguousarray(X)
         cdef np.ndarray[np.float64_t, ndim=2, mode='c'] Y = seed
-        self.thisptr.run(&_X[0,0], N, D, &Y[0,0], d, perplexity, theta)
+        self.thisptr.run(&_X[0,0], N, D, &Y[0,0], d, perplexity, theta, maxiter)
         return Y
 

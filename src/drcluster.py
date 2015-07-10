@@ -110,15 +110,20 @@ class DRClusterRun(object):
         coordspath = "{}/{}_{}d_{}_coords.txt".format(self.args.directory,
                                                       self.base,self.args.dimension,
                                                       self.args.type)
-        alg = algorithms.Algorithm(scipymat,self.points,int(self.args.dimension))
+        alg = algorithms.Algorithm(scipymat,self.points,
+                                   int(self.args.dimension),
+                                   self.args.seedpath,)
 
         if not (self.args.preclustered):
             if (self.args.type == "svdsne"):
-                matrix = alg.svdsne(int(self.args.perplexity),float(self.args.theta))
+                matrix = alg.svdsne(int(self.args.perplexity),
+                                    float(self.args.theta),
+                                    int(self.args.maxiter))
             elif (self.args.type == "mdsonly"):
                 matrix = alg.mdsonly()
             else:
-                matrix = alg.sneonly(self.args.reinitialize,self.args.directory)
+                matrix = alg.sneonly(self.args.reinitialize,
+                                     self.args.directory)
 
             fastacoords = "{}/{}_{}d_{}_fastacoords.txt".format(self.args.directory,
                                                                 self.base,self.args.dimension,

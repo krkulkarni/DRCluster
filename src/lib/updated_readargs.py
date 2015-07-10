@@ -57,6 +57,14 @@ def arg_parser():
                             help="Theta value for bh_tsne (Lower value is more accurate, 0 is true TSNE",
                             default=0.5)
 
+    paraParser.add_argument('-iter', '--maxiter',
+                            help="Number of iterations to run on SVDSNE algorithm",
+                            default=1000)
+
+    paraParser.add_argument('-seed', '--seedpath',
+                            help="Path to coordinates for initial seeding (must be in txt format)",
+                            default=None)
+
     paraParser.add_argument('-color','--color',
                             help="Choose coloring scheme: modelability, PFAM, or group",
                             choices=['pfam', 'mod', 'group'],default='mod')

@@ -29,12 +29,15 @@ __author__ = 'kulkarnik'
 
 class Algorithm(object):
 
-    def __init__(self,scipymat,points,dim):
+    def __init__(self,scipymat,points,dim, seedpath):
         self.scipymat = scipymat
         self.points = points
         self.pointslen = len(points)
         self.dim = dim
-        self.seed = self._generate_seed_matrix()
+        if (seedpath):
+            self.seed = np.loadtxt(seedpath)
+        else:
+            self.seed = self._generate_seed_matrix()
 
 
     def _coordsgen(self,points):
@@ -91,12 +94,12 @@ class Algorithm(object):
         return np.array(seed)
 
 
-    def svdsne(self,perp,theta):
+    def svdsne(self,perp,theta,maxiter):
         print("Performing svdsne")
         tempred = min(self.pointslen/5,200)
         print("Reducing to {} dimensions with SVD".format(tempred))
         tempmatrix = mds_calc.svd(self.scipymat,tempred)
-        matrix = tsne.bh_sne(tempmatrix,self.seed,
+        matrix = tsne.bh_sne(tempmatrix,self.seed,maxiter,
                              d=self.dim,perplexity=perp,
                              theta=theta,pca_d=None)
         return matrix
