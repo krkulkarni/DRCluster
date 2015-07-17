@@ -12,7 +12,7 @@ sys.path.append("lib/tsne/")
 #from lib import jsonconv
 
 __author__ = "kulkarnik"
-__version__ = "0.9.2"
+__version__ = "0.9.6"
 
 class DRClusterRun(object):
 

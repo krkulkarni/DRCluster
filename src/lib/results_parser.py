@@ -28,7 +28,7 @@ def next_line_original_format(alignfile, flag, points,search,totaloutputlen):
         if (search == 'blast'):
             qSeqId = line[0].split(";")[0]
             sSeqId = line[1].split(";")[0]
-            queryLen= line[3].split(";")[0]
+            queryLen= float(line[3].split(";")[0])
             eValue = float(line[10].strip())
             bitscore = float(line[11].strip())
         elif (search == 'hmmer'):

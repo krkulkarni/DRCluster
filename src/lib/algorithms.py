@@ -65,15 +65,26 @@ class Algorithm(object):
             "H": .7478338718290908,  # (0.5,0.8)
 
             "D": .8803319774576138,  # ALL POLAR, NEGATIVE
-            "E": .9738805050045272   # RESIDUES
+            "E": .9738805050045272,   # RESIDUES
                                      # (0.8,1.0)
+
+            "X": 0.0                 # Random residue
         }
 
         for i, (key, point) in enumerate(points.iteritems(),start=1):
+            if (len(point.seq) >= 10):
+                x_coord = sum(amino_acids[aa] for aa in point.seq[0:10])
+                y_coord = sum(amino_acids[aa] for aa in point.seq[-10:-1])
+            else:
+                x_coord = sum(amino_acids[aa] for aa in point.seq[0:len(point.seq)-1])
+                y_coord = sum(amino_acids[aa] for aa in point.seq[0:len(point.seq)-1])
+
+            if (len(point.seq) >= 20):
+                z_coord = sum(amino_acids[aa] for aa in point.seq[0:20:2])
+            else:
+                z_coord = sum(amino_acids[aa] for aa in point.seq[0:len(point.seq)-1:2])
             yield i,\
-                  sum(amino_acids[aa] for aa in point.seq[0:10]), \
-                  sum(amino_acids[aa] for aa in point.seq[-10:-1]), \
-                  sum(amino_acids[aa] for aa in point.seq[0:20:2])
+                  x_coord, y_coord, z_coord
 
     def _generate_seed_matrix(self):
         seed = []

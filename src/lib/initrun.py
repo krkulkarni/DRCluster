@@ -47,7 +47,7 @@ def read_fasta(fastafile,annotated):
                     index += 1
 
                     sequence = f.next()
-                    newpoint.seq = sequence
+                    newpoint.seq = sequence.strip()
                     if name not in points:
                         points[name] = newpoint
                     else:
@@ -58,6 +58,9 @@ def read_fasta(fastafile,annotated):
                             num+=1
                         print("Renaming to {}".format(name))
                         points[name] = newpoint
+                else:
+                    print("ERROR in FASTA format")
+                    print("Line skipped: {}".format(line))
         else:
             for i, line in enumerate(f):
                 if (line.startswith("#")):
