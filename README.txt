@@ -148,3 +148,5 @@ To get coloring based on modelability and PFAM, include the `-a` flag, and forma
 -perp PERPLEXITY, --perplexity PERPLEXITY
                         Set the number of neighbors to use in the t-SNE
                         algorithm
+
+WARNING: try not to use the -dim 3 or -dim 4 options without -theta 0, as well. t-SNE approximation does not work well with >2 dimensions

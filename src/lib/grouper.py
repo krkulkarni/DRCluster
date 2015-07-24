@@ -15,15 +15,16 @@ def savegroups(grouppath,points,colors):
         pointslist = groupdict.get(groupnum, [])
         for name, point in points.iteritems():
             if (point.index == index):
-                pointslist.append(point.name)
+                pointslist.append((point.name,point.seq))
                 break
         groupdict[groupnum] = pointslist
 
     with open(grouppath, 'wb') as f:
         for group, namelist in groupdict.iteritems():
-            f.write("Cluster {}:\n".format(int(group)))
-            for name in namelist:
+            f.write("# Cluster {}:\n".format(int(group)))
+            for (name,seq) in namelist:
                 f.write("{}\n".format(name))
+                f.write("{}\n".format(seq))
             f.write("\n")
 
 class Object(object):

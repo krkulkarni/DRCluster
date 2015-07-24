@@ -38,6 +38,7 @@ class DRClusterRun(object):
             if not (os.path.exists(dirname)):
                 os.makedirs(dirname)
             self.args.directory = dirname
+
         # Create dictionary of points from fastafile
         # See lib/initrun.py for more details
         self.points = initrun.read_fasta(self.args.fasta,self.args.annotated)
@@ -107,6 +108,12 @@ class DRClusterRun(object):
     def runClustering(self,scipymat):
         # Run the appropriate clustering algorithm
         # See lib/mds_calc.py for more details
+
+        if (self.args.dimension == "3" or self.args.dimension == "4"):
+            if(float(self.args.theta) != 0):
+                print("WARNING: BH-TSNE APPROXIMATION USED FOR {} DIMENSIONS\n"
+                      "WARNING: MAY LEAD TO POOR CLUSTER RESOLUTION".format(self.args.dimension))
+
         coordspath = "{}/{}_{}d_{}_coords.txt".format(self.args.directory,
                                                       self.base,self.args.dimension,
                                                       self.args.type)

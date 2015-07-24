@@ -118,11 +118,12 @@ def add_to_e_matrix(query,match,e,points,row,col,data):
     return row,col,data
 
 def convert_e_score(evalue):
-    evalue = evalue/10
-    try:
-        if (evalue>1):
-            return 0
-        return -math.log(evalue)
-        
-    except ValueError:
-        return 250
+    evalue = evalue**0.1
+    return evalue
+    # try:
+    #     if (evalue>1):
+    #         return 0
+    #     return -math.log(evalue)
+    #
+    # except ValueError:
+    #     return 250
