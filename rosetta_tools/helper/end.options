@@ -1,0 +1,19 @@
+
+##LOOP BUILDING
+
+-loops:frag_sizes 9 3
+-loops:frag_files aat000_09_05.200_v1_3 aat000_03_05.200_v1_3
+
+#use quick CCD to model loops
+-loops:remodel quick_ccd
+-idealize_after_loop_close
+-loops:extended true
+-loops:build_initial true
+-loops:relax fastrelax
+-relax:thorough
+
+##OUTPUT OPTIONS
+-out:overwrite
+-out:pdb
+-out:path:pdb results
+-out:file:fullatom

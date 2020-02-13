@@ -1,0 +1,9 @@
+##INPUT OPTIONS
+# for minirosetta.linuxgcc
+
+# call threading protocol
+-run:protocol threading
+
+-in:file:fullatom
+-in:file:psipred_ss2 t000_.psipred_ss2
+-cm:aln_format grishin

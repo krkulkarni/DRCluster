@@ -1,0 +1,2 @@
+#!/bin/bash
+wget   -O $1.pdb http://www.rcsb.org/pdb/files/$1.pdb

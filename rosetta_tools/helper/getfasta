@@ -1,0 +1,3 @@
+#!/bin/bash
+a='http://www.rcsb.org/pdb/download/downloadFile.do?fileFormat=FASTA&compression=NO&structureId='
+wget -O $1.fasta wget $a$1
