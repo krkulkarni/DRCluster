@@ -1,0 +1,7 @@
+# to generate blast db
+~/software/ncbi-blast-2.2.30+/bin/makeblastdb -in <fastafile> -dbtype prot -out <dbname>
+
+# to run all v all blast
+~/software/ncbi-blast-2.2.30+/bin/blastp -db <dbname> -query <fastafile> -outfmt "6 qseqid qlen sseqid slen evalue bitscore" -out results.out
+
+

@@ -1,0 +1,4 @@
+sed 's/\([^-]*\).*/\1/' $1 > tmp
+uniq tmp > $2
+rm tmp
+wc $2

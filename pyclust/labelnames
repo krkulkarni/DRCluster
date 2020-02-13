@@ -1,0 +1,8 @@
+#!/bin/bash
+
+cp $1 checkit.fas
+count=1
+while read p; do
+	/bin/bash /Users/kulkarnik/Research/MDSCluster_2014/data_manipulation/mvscript "$p" "$count"
+	count=$((count+1))
+done < $2
