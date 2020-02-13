@@ -1,0 +1,2 @@
+#!/bin/bash
+rm -r results rosetta.commands *.pdb compmod.options pdblog *.aln hmmerlog $1.align dom.hits 

@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# run minirosetta modeller
+/farm/software/rosetta3.5/rosetta_source/bin/minirosetta.linuxgccrelease @compmod.options > log &
+
+# cluster structures
+/farm/software/rosetta3.5/rosetta_source/bin/cluster.linuxgccrelease -database /farm/software/rosetta3.5/rosetta_database/ -in:file:s results/*.pdb -in:file:fullatom -cluster:sort_groups_by_energy > cluster.log &
+
+# remove unnecessary cluster PDBs
+rm c.0.*

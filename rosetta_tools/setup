@@ -1,0 +1,111 @@
+#!/bin/bash
+
+## Kaustubh Kulkarni, Nov. 3, 2014
+
+#Set Script Name variable
+SCRIPT=`basename ${BASH_SOURCE[0]}`
+DIRNAME=`dirname ${BASH_SOURCE[0]}`
+
+#Set fonts for Help.
+NORM=`tput sgr0`
+BOLD=`tput bold`
+REV=`tput smso`
+
+#Set default variables
+modnum=100
+
+#Help function
+function HELP {
+  echo -e \\n"Help documentation for ${BOLD}${SCRIPT}.${NORM}"\\n
+  echo -e "${REV}Basic usage:${NORM} ${BOLD}$SCRIPT -p [proteinname] -j [jackhmmersource] -r [rosettasource] -n [number of decoys]${NORM}"\\n
+  echo "${REV}-p${NORM}  --Designates protein name."
+  echo "${REV}-j${NORM}  --Sets path of hummer binaries directory."
+  echo "${REV}-r${NORM}  --Sets path of rosetta installation."
+  echo "${REV}-n${NORM}  --Designates number of models to create. Default is 100."
+  echo -e "${REV}-h${NORM}  --Displays this help message."\\n
+  echo -e "Fragments must be in the format: ${BOLD}aat000_0(3 or 9)_05.200_v1_3${NORM} and ${BOLD}t000_.psipred_ss2${NORM}"\\n
+  echo -e "Example: ${BOLD}$SCRIPT -p example -j /data/spine/bin/external/hmmer-3.1b1/binaries -r /data/spine/bin/external/rosetta-3.5 -n 200${NORM}"\\n
+  exit 1
+}
+
+#Check the number of arguments. If none are passed, print help and exit.
+NUMARGS=$#
+if [ $NUMARGS -eq 0 ]; then
+  HELP
+fi
+
+### Start getopts code ###
+
+while getopts :j:r:n:p:h FLAG; do
+  case $FLAG in
+    j)  #set option "jackhmmmrpath"
+      hmrpath=$OPTARG
+      echo "-j used: $OPTARG"
+      ;;
+    r)  #set option "rosettapath"
+      rospath=$OPTARG
+      echo "-r used: $OPTARG"
+      ;;
+    n)  #set option "model num"
+      modnum=$OPTARG
+      echo "-n used: $OPTARG"
+      ;;
+    p)  #set option "p"
+      prot=$OPTARG
+      echo "-p used: $OPTARG"
+      ;;
+    h)  #show help
+      HELP
+      ;;
+    \?) #unrecognized option - show help
+      echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
+      HELP
+      #If you just want to display a simple error message instead of the full
+      #help, remove the 2 lines above and uncomment the 2 lines below.
+      #echo -e "Use ${BOLD}$SCRIPT -h${NORM} to see the help documentation."\\n
+      #exit 2
+      ;;
+  esac
+done
+
+## Run jackhmmer on fasta file
+# Output: domain info(dom.hits), 
+$hmrpath/jackhmmer --domtblout dom.hits -A $prot.align $prot.fasta $DIRNAME/helper/pdb > hmmerlog
+
+## Run Python script to create alignment file
+# Output: list of PDB ID and domains(pdblog), alignment file(outlog)
+python $DIRNAME/helper/runjm.py $prot.fasta dom.hits $prot.align
+
+## Setup comparative modeling options,
+## retrieve PDBs from RCSB,
+## clean correct domain of PDB,
+## move alignment file to correct name
+s="$prot."
+cat $DIRNAME/helper/begin.options > compmod.options
+echo "-in:file:fasta $prot.fasta" >> compmod.options
+while read line
+do
+        a=( $line )
+        $DIRNAME/helper/getpdb ${a[0]}
+        #$DIRNAME/helper/getfasta ${a[0]}
+        python $DIRNAME/helper/clean_pdb.py ${a[0]}.pdb ${a[1]}
+	echo "-in:file:template_pdb ${a[0]}_${a[1]}.pdb" >> compmod.options
+	s+="${a[0]}_${a[1]}."
+done < pdblog
+s+="aln"
+echo "-in:file:alignment $s" >> compmod.options
+echo "-database $rospath/rosetta_database" >> compmod.options
+cat $DIRNAME/helper/end.options >> compmod.options
+echo "-out:nstruct $modnum" >> compmod.options
+echo "-out:prefix $prot." >> compmod.options
+mv outlog $s
+
+## Create a directory to store results
+mkdir results
+
+## Create file with appropriate rosetta commands
+touch rosetta.commands
+echo -e "COMMAND FOR MINIROSETTA MODELING: \n" > rosetta.commands
+echo -e "$rospath/bin/minirosetta.linuxgccrelease @compmod.options > log &\n" >> rosetta.commands
+echo -e "COMMAND FOR ROSETTA DECOY CLUSTERING: \n" >> rosetta.commands
+echo -e "$rospath/bin/cluster.linuxgccrelease -database $rospath/rosetta_database/ -in:file:s results/*.pdb -in:file:fullatom -cluster:sort_groups_by_energy > cluster.log &" >> rosetta.commands
